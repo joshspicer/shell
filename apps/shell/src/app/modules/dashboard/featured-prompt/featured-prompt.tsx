@@ -14,9 +14,10 @@ export function FeaturedPrompt({
   const launchButton = useMemo(() => {
     if (needAccess) {
       return (
-        <button disabled className="btn">
-          Launch (Access permission needed)
-        </button>
+        <Button disabled className="hover:cursor-not-allowed">
+          Launch <br />
+          (Access permission needed)
+        </Button>
       );
     }
     return (
