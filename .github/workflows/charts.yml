@@ -22,6 +22,7 @@ concurrency:
 
 jobs:
   lint:
+    name: Lint
     outputs:
       charts: ${{ steps.charts-json.outputs.result }}
       tests: ${{ steps.tests-json.outputs.result }}
@@ -97,6 +98,7 @@ jobs:
           fi
 
   test:
+    name: Test charts/${{ matrix.chart }}/ci/${{ matrix.test }}.yaml on Helm ${{ matrix.helm_version }}
     runs-on: ubuntu-latest
     needs: lint
     # Runs on all pushes to the default branch and if the lint job detects
@@ -165,6 +167,7 @@ jobs:
           fi
 
   push:
+    name: Push charts/${{ matrix.chart }} to Helm repo
     runs-on: ubuntu-latest
     needs: [lint, test]
     # Runs on pushes to the default branch to get version bumps. Only runs on
