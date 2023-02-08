@@ -11,7 +11,7 @@ export const filterPromptsBySearch = (
       if (searchKey && searchValue) {
         return (
           key.toLowerCase() === searchKey.toLowerCase() &&
-          value.toLowerCase() === searchValue.toLowerCase()
+          value.toLowerCase().includes(searchValue.toLowerCase())
         );
       }
       return (
