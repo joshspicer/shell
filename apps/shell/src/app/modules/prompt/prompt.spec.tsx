@@ -2,28 +2,44 @@ import { promptService as PromptType, PromptAccessError } from '@cased/remotes';
 import { render, waitFor } from '@testing-library/react';
 import { StoreProvider } from 'easy-peasy';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { WebSocketStatus, getMockStore, factory } from '@cased/redux';
-
+import {
+  WebSocketStatus,
+  getMockStore,
+  factory,
+  PromptWebSocket,
+} from '@cased/redux';
+import { Terminal } from 'xterm';
 import Prompt from './prompt';
 
 const fakeToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
-const prepareTest = (injections = {}) => {
+interface IOptions {
+  mockWebSocketError?: boolean;
+  injections?: Record<string, unknown>;
+}
+
+const setup = (options: IOptions = {}) => {
+  const { injections = {}, mockWebSocketError = false } = options;
   const messageSubscriptions: ((_: unknown) => void)[] = [];
 
-  const mockWebSocket = {
+  const authenticate = mockWebSocketError
+    ? jest.fn().mockRejectedValue(new Error())
+    : // @NOTE Suite crashes when this is converted to a proper promise, that's weird...
+      jest.fn();
+
+  const mockWebSocket: Partial<PromptWebSocket> = {
     send: jest.fn(),
     sendResize: jest.fn(),
     close: jest.fn(),
-    authenticate: jest.fn(),
+    authenticate,
     onMessage: jest
       .fn()
       .mockImplementation((callback) => messageSubscriptions.push(callback)),
     onClose: jest.fn(),
   };
 
-  const mockTerminal = {
+  const mockTerminal: Partial<Terminal> = {
     open: jest.fn(),
     write: jest.fn(),
     dispose: jest.fn(),
@@ -39,7 +55,9 @@ const prepareTest = (injections = {}) => {
 
   const mockStore = getMockStore({
     promptService: {
-      get: async (slug: string) => ({ name: slug } as PromptType),
+      get: jest
+        .fn()
+        .mockImplementation((slug) => Promise.resolve({ name: slug })),
       getWebSocketUrl: async () => ({
         url: 'ws://localhost:1234',
         promptSessionId: '1234',
@@ -66,12 +84,23 @@ const prepareTest = (injections = {}) => {
   const expectWebSocketStatus = async (status: WebSocketStatus) =>
     waitFor(() => expect(mockStore.getState().prompt.status).toBe(status));
 
+  const result = render(
+    <StoreProvider store={mockStore}>
+      <Routes>
+        <Route path="/prompts/:slug" element={<Prompt slug="my-prompt" />} />
+        <Route path="/dashboard" element={<div>Dashboard</div>} />
+      </Routes>
+    </StoreProvider>,
+    { wrapper: BrowserRouter },
+  );
+
   return {
     mockStore,
     mockWebSocket,
     expectWebSocketStatus,
     expectTerminalOutput,
     sendMessageFromServer,
+    result,
   };
 };
 
@@ -82,17 +111,7 @@ describe('Prompt', () => {
       mockWebSocket,
       expectWebSocketStatus,
       expectTerminalOutput,
-      mockStore,
-    } = prepareTest();
-
-    render(
-      <StoreProvider store={mockStore}>
-        <Routes>
-          <Route path="/prompts/:slug" element={<Prompt slug="my-prompt" />} />
-        </Routes>
-      </StoreProvider>,
-      { wrapper: BrowserRouter },
-    );
+    } = setup();
 
     await waitFor(() =>
       expect(mockWebSocket.authenticate).toHaveBeenCalledWith(fakeToken),
@@ -104,23 +123,8 @@ describe('Prompt', () => {
   });
 
   it('displays error when authentication fails', async () => {
-    const {
-      mockWebSocket,
-      mockStore,
-      expectTerminalOutput,
-      expectWebSocketStatus,
-    } = prepareTest();
-
-    mockWebSocket.authenticate.mockRejectedValue(new Error());
-
-    render(
-      <StoreProvider store={mockStore}>
-        <Routes>
-          <Route path="/prompts/:slug" element={<Prompt slug="my-prompt" />} />
-        </Routes>
-      </StoreProvider>,
-      { wrapper: BrowserRouter },
-    );
+    const { mockWebSocket, expectTerminalOutput, expectWebSocketStatus } =
+      setup({ mockWebSocketError: true });
 
     await expectTerminalOutput('Failed to connect to my-prompt');
     await waitFor(() =>
@@ -131,38 +135,23 @@ describe('Prompt', () => {
   });
 
   it(`Fails to run if the user doesn't have access`, async () => {
-    const { expectTerminalOutput, mockStore } = prepareTest({
-      promptService: {
-        get: async (slug: string) => ({ name: slug } as PromptType),
-        getWebSocketUrl: (slug: string) => {
-          throw new PromptAccessError({ slug } as PromptType);
+    const { expectTerminalOutput } = setup({
+      injections: {
+        promptService: {
+          get: async (slug: string) =>
+            ({ name: slug } as Partial<typeof PromptType>),
+          getWebSocketUrl: (slug: string) => {
+            throw new PromptAccessError(slug);
+          },
         },
       },
     });
-
-    render(
-      <StoreProvider store={mockStore}>
-        <Routes>
-          <Route path="/prompts/:slug" element={<Prompt slug="my-prompt" />} />
-        </Routes>
-      </StoreProvider>,
-      { wrapper: BrowserRouter },
-    );
 
     await expectTerminalOutput(`You don't have access to my-prompt`);
   });
 
   it('Fails to run two connections at once', async () => {
-    const { mockStore, mockWebSocket, expectTerminalOutput } = prepareTest();
-
-    render(
-      <StoreProvider store={mockStore}>
-        <Routes>
-          <Route path="/prompts/:slug" element={<Prompt slug="my-prompt" />} />
-        </Routes>
-      </StoreProvider>,
-      { wrapper: BrowserRouter },
-    );
+    const { mockStore, mockWebSocket, expectTerminalOutput } = setup();
 
     await waitFor(() =>
       expect(mockWebSocket.authenticate).toHaveBeenCalledWith(fakeToken),
@@ -172,6 +161,7 @@ describe('Prompt', () => {
       <StoreProvider store={mockStore}>
         <Routes>
           <Route path="/prompts/:slug" element={<Prompt slug="my-prompt" />} />
+          <Route path="/dashboard" element={<div>Dashboard</div>} />
         </Routes>
       </StoreProvider>,
       { wrapper: BrowserRouter },
@@ -181,23 +171,17 @@ describe('Prompt', () => {
   });
 
   it('Fails to run if the url lookup fails', async () => {
-    const { expectTerminalOutput, mockStore } = prepareTest({
-      promptService: {
-        get: async (slug: string) => ({ name: slug } as PromptType),
-        getWebSocketUrl: () => {
-          throw new Error("Can't find prompt");
+    const { expectTerminalOutput } = setup({
+      injections: {
+        promptService: {
+          get: async (slug: string) =>
+            ({ name: slug } as Partial<typeof PromptType>),
+          getWebSocketUrl: () => {
+            throw new Error("Can't find prompt");
+          },
         },
       },
     });
-
-    render(
-      <StoreProvider store={mockStore}>
-        <Routes>
-          <Route path="/prompts/:slug" element={<Prompt slug="my-prompt" />} />
-        </Routes>
-      </StoreProvider>,
-      { wrapper: BrowserRouter },
-    );
 
     await expectTerminalOutput(`Failed to connect to my-prompt`);
   });

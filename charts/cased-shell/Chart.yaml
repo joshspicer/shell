@@ -18,7 +18,7 @@ home: https://cased.com
 # * Add the `helm:push` label to your PR, or
 # * Merge a PR to the default branch
 #
-version: '3.0.0-alpha.2'
+version: '3.0.0-alpha.3'
 appVersion: '3.0.0'
 maintainers:
   # Required by chart-testing to be a GitHub org slug

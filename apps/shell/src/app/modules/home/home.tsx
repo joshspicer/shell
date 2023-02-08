@@ -48,7 +48,7 @@ export function Home() {
 
         <ul>
           <li>
-            <Button onClick={() => window.location.assign('/v2/')}>
+            <Button onClick={() => window.location.assign('/v2/auth')}>
               SSO user
             </Button>
           </li>

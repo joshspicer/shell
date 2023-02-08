@@ -114,7 +114,7 @@ if [ -n "$CODESPACE_NAME" ]; then
   gh codespace ports visibility 8889:public -c $CODESPACE_NAME
 fi
 
-echo "Development environment ready! Login here with 'admin@cased.dev' with the password 'password':"
+echo "Development environment ready! Login here with 'admin@cased.dev' with the password 'casedopensource2023':"
 echo ""
 echo "  ${CASED_URL_PROTOCOL:-http}://${CASED_SHELL_HOSTNAME}/"
 echo ""

@@ -9,7 +9,7 @@ import {
   WebSocketStatus,
   factory,
 } from '@cased/redux';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { startLoadingMessage } from './prompt.loader';
 import './xterm.scss';
 import { ansi } from './prompt.ansi';
@@ -22,6 +22,7 @@ interface IProps {
 }
 
 export default function Prompt({ slug }: IProps) {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const termEl = useRef<HTMLDivElement>(null);
   const [terminal, setTerminal] = useState<Terminal>();
@@ -32,6 +33,7 @@ export default function Prompt({ slug }: IProps) {
   const webSocketDispose = useStoreActions((actions) => actions.prompt.dispose);
 
   const promptForm = useStoreState((state) => state.promptForm.promptForm);
+  // @TODO Move to the redux layer so the sockets can be driven by store state, currently there is mixed state handling between component and redux. Component state should be a UI display state only
   // This effect is responsible for initializing the terminal and connecting to the web socket
   useEffect(() => {
     if (!termEl.current) throw new Error('Terminal element not initialized');
@@ -72,6 +74,7 @@ export default function Prompt({ slug }: IProps) {
     webSocketDispose,
   ]);
 
+  // @TODO Redux layer should bind this logic when the web socket is connected
   // This effect is responsible for updating the terminal when the web socket status changes
   useEffect(() => {
     if (!terminal) return undefined;
@@ -79,12 +82,13 @@ export default function Prompt({ slug }: IProps) {
     let disposeLoader = () => {};
     if (webSocketStatus === WebSocketStatus.Disconnected) {
       terminal.write('\r\nDisconnected from server\n\r');
+      navigate('/dashboard');
     } else if (webSocketStatus === WebSocketStatus.Connecting) {
       disposeLoader = startLoadingMessage(terminal, `Connecting to ${slug}`);
     }
 
     return () => disposeLoader();
-  }, [webSocketStatus, slug, terminal]);
+  }, [webSocketStatus, slug, terminal, navigate]);
 
   // This effect is responsible for resizing the terminal when the window is resized
   useEffect(() => {

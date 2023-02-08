@@ -87,7 +87,7 @@ class AuthCallbackController(BaseMixin, tornado.web.RequestHandler):
 
         state = self.get_argument("state")
         if not state or state not in VALIDATIONS:
-            self.redirect("/v2/")
+            self.redirect("/")
             return
 
         try:
@@ -142,7 +142,7 @@ class AuthCallbackController(BaseMixin, tornado.web.RequestHandler):
             if not self.set_token(token):
                 return
 
-            self.redirect("/v2/")
+            self.redirect("/")
 
             return
 
