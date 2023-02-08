@@ -8,6 +8,7 @@ on:
     types:
       - opened
       - synchronize
+      - labeled
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore
     paths:
       - '.github/workflows/charts-lint-test.yml'
@@ -23,6 +24,10 @@ concurrency:
 jobs:
   lint:
     name: Lint
+    # Only run on PR-labeling events if the label is helm:push
+    if: |
+      github.event.action != 'labeled' ||
+      ( github.event.action == 'labeled' && github.event.label.name == 'helm:push')
     outputs:
       charts: ${{ steps.charts-json.outputs.result }}
       tests: ${{ steps.tests-json.outputs.result }}
