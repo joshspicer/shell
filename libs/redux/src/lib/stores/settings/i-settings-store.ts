@@ -7,6 +7,7 @@ import {
   ISettingsUser,
   ICasedShellData,
   IGroupDetails,
+  IUser,
 } from '@cased/remotes';
 import type { IStoreInjections } from '../store';
 
@@ -21,6 +22,7 @@ export interface ISettingsStore {
   users: ISettingsUser[];
   userAccess: string;
   userLogs: ILog[];
+  userLogsAuthor: IUser;
 
   groups: ISettingsGroup[];
   groupAccess: string;
@@ -39,7 +41,7 @@ export interface ISettingsStore {
   setUsers: Action<ISettingsStore, ISettingsUser[]>;
   setUser: Action<ISettingsStore, { id: string; user: ISettingsUser }>;
   setUserAccess: Action<ISettingsStore, string>;
-  setUserLogs: Action<ISettingsStore, ILog[]>;
+  setUserLogs: Action<ISettingsStore, { user: IUser; logs: ILog[] }>;
   setOrganization: Action<ISettingsStore, { organization: string }>;
   setCertificateAuthentication: Thunk<
     ISettingsStore,

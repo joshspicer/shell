@@ -19,6 +19,7 @@ export const settingsStore: ISettingsStore = {
   users: [],
   userAccess: '',
   userLogs: [],
+  userLogsAuthor: {},
 
   groups: [],
   groupAccess: '',
@@ -82,8 +83,9 @@ export const settingsStore: ISettingsStore = {
     state.users = state.users.map((u) => (u.id === id ? user : u));
   }),
 
-  setUserLogs: action((state, userLogs) => {
-    state.userLogs = userLogs;
+  setUserLogs: action((state, { user, logs }) => {
+    state.userLogs = logs;
+    state.userLogsAuthor = user;
   }),
 
   setGroupLogs: action((state, groupLogs) => {
