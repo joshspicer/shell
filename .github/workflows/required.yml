@@ -8,9 +8,9 @@ on:
     workflows:
       - Build Devcontainer - Required
       - Build Docker Image - Required
+      - Charts - Required
       - Frontend Code Quality Check - Required
       - Unit Test - Required
-      - Test Charts - Required
     types:
       - completed
 

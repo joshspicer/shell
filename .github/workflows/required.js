@@ -40,6 +40,11 @@ module.exports = async ({ github, context }) => {
     if (workflowRun.conclusion == 'success') {
       console.log(`Success!`);
       allRequiredSucceeded = allRequiredSucceeded && true;
+    } else if (workflowRun.conclusion == 'skipped') {
+      console.log(
+        `Skipped! We'll count that as an optimization and thus success.`,
+      );
+      allRequiredSucceeded = allRequiredSucceeded && true;
     } else {
       allRequiredSucceeded = false;
 
