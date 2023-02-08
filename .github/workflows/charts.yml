@@ -167,7 +167,7 @@ jobs:
           fi
 
   push:
-    name: Push charts/${{ matrix.chart }} to Helm repo
+    name: Push oci://ghcr.io/cased/${{ matrix.chart }}
     runs-on: ubuntu-latest
     needs: [lint, test]
     # Runs on pushes to the default branch to get version bumps. Only runs on
@@ -211,10 +211,10 @@ jobs:
           #
           # The below configuration results in the following chart references:
           #
-          #   oci://ghcr.io/cased-charts/cased-shell:0.1.0
+          #   oci://ghcr.io/cased/cased-shell:0.1.0
           #
           registry: ghcr.io
-          repository: cased-charts
+          repository: cased
           name: ${{ matrix.chart }}
           path: ${{ matrix.chart }}
           tag: ${{ steps.chart.outputs.version }}
