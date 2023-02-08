@@ -55,6 +55,7 @@ RUN apt-get clean && apt-get update && \
     caddy version
 
 FROM cased-devcontainer-base as cased-devcontainer
+ENV HELM_VERSION=3.11.0
 # OS
 RUN curl -fsSL -o /usr/share/keyrings/githubcli-archive-keyring.gpg https://cli.github.com/packages/githubcli-archive-keyring.gpg &&  \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | \
@@ -101,7 +102,7 @@ RUN curl -fsSL -o /usr/share/keyrings/githubcli-archive-keyring.gpg https://cli.
     : kubernetes and helm && \
     curl -1sLf --connect-timeout 30 --retry 3 https://raw.githubusercontent.com/devcontainers/features/main/src/kubectl-helm-minikube/install.sh > /usr/local/bin/kubectl-helm-minikube.sh && \
     chmod +x /usr/local/bin/kubectl-helm-minikube.sh && \
-    /usr/local/bin/kubectl-helm-minikube.sh && \
+    HELM=${HELM_VERSION} /usr/local/bin/kubectl-helm-minikube.sh && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
