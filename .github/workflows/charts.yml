@@ -1,4 +1,4 @@
-name: Test Charts - Required
+name: Charts - Required
 
 on:
   push:
@@ -164,3 +164,56 @@ jobs:
             exit 1
           fi
 
+  push:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    # Runs on pushes to the default branch to get version bumps. Only runs on
+    # PRs if we have the right label since many PRs can contain an incremented
+    # version.
+    if: |
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch) ||
+      contains(github.event.pull_request.labels.*.name, 'helm:push')
+    strategy:
+      fail-fast: false
+      matrix:
+        chart: ${{fromJson(needs.lint.outputs.charts)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Determine chart version
+        id: chart
+        run: |
+          set -x
+          version="$(docker run -i --rm -v "${PWD}":/workdir -w /workdir mikefarah/yq:4 '.version' < charts/${{ matrix.chart }}/Chart.yaml)"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: ${{ matrix.helm_version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Chart | Push
+        uses: appany/helm-oci-chart-releaser@v0.4.0
+        with:
+          # From
+          # https://github.com/helm/community/blob/main/hips/hip-0006.md#4-chart-names--oci-reference-basenames:
+          #
+          # > to keep things simple, the basename (the last segment of the URL
+          # > path) on a registry reference should be equivalent to the chart
+          # > name.
+          #
+          # The below configuration results in the following chart references:
+          #
+          #   oci://ghcr.io/cased-charts/cased-shell:0.1.0
+          #
+          registry: ghcr.io
+          repository: cased-charts
+          name: ${{ matrix.chart }}
+          path: ${{ matrix.chart }}
+          tag: ${{ steps.chart.outputs.version }}
+          registry_username: ${{ github.repository_owner }}
+          registry_password: ${{ secrets.GITHUB_TOKEN }}
