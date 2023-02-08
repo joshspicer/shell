@@ -1,4 +1,4 @@
-import { ApprovalType } from '@cased/remotes';
+import { ApprovalType } from '@cased/data';
 import { render } from '@testing-library/react';
 import { StoreProvider } from 'easy-peasy';
 import { getMockStore } from '@cased/redux';

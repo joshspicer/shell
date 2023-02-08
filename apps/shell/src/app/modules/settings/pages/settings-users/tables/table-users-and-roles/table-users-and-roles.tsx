@@ -1,4 +1,4 @@
-import { ISettingsUser } from '@cased/remotes';
+import { ISettingsUser } from '@cased/data';
 import {
   Table,
   TableBody,

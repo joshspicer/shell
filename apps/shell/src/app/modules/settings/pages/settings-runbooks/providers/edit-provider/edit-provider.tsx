@@ -1,7 +1,7 @@
 import { TextTitle } from '@cased/ui';
 import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { IApiProvider } from '@cased/remotes';
+import { IApiProvider } from '@cased/data';
 import { useStoreActions } from '@cased/redux';
 import SettingsTemplate, { TabId } from '../../../../settings-template';
 import ProviderForm from '../provider-form/provider-form';

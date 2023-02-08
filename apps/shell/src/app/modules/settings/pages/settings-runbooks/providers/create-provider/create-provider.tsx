@@ -1,4 +1,4 @@
-import { IApiProvider } from '@cased/remotes';
+import { IApiProvider } from '@cased/data';
 import { TextTitle } from '@cased/ui';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';

@@ -1,8 +1,8 @@
+import { A } from '@cased/test-utilities';
+import { IGroupDetails } from '@cased/data';
 import { settingsService } from './settings-service';
 import { axiosInstance } from '../axios';
 import { IGetGroupResponse } from './i-settings-api-response';
-import { IGroupDetails } from './i-settings';
-import { A } from '@cased/test-utilities';
 
 describe('settingsService', () => {
   describe('connectToGithub', () => {

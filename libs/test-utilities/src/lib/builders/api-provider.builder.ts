@@ -1,4 +1,4 @@
-import { IApiProvider } from '@cased/remotes';
+import type { IApiProvider } from '@cased/data';
 
 export class ApiProviderBuilder {
   private _hasToken = false;

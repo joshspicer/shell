@@ -1,4 +1,4 @@
-import { IApiProvider, IEntry, IRunbookDatabase } from '@cased/remotes';
+import { IApiProvider, IEntry, IRunbookDatabase } from '@cased/data';
 import { AxiosError } from 'axios';
 import { thunk, Thunk } from 'easy-peasy';
 import { Debounce } from '@cased/utilities';

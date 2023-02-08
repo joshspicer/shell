@@ -1,4 +1,4 @@
-import { IUser } from '@cased/remotes';
+import { IUser } from '@cased/data';
 
 export class UserBuilder {
   _email = 'asdf@asdf.com';

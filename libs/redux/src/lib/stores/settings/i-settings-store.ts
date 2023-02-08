@@ -8,7 +8,7 @@ import {
   ICasedShellData,
   IGroupDetails,
   IUser,
-} from '@cased/remotes';
+} from '@cased/data';
 import type { IStoreInjections } from '../store';
 
 export interface ISettingsStore {

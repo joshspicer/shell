@@ -12,3 +12,7 @@ export * from './prompts/i-prompt';
 export * from './i-label';
 export * from './runbooks/panel';
 export * from './runbooks/runbook-mode';
+export * from './i-user';
+export * from './i-settings';
+export * from './i-api-provider';
+export * from './i-settings-approvals';

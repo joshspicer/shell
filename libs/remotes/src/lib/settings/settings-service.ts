@@ -1,7 +1,5 @@
-import { axiosInstance } from '../axios';
-import type { IUser } from '../remotes';
-import { settingsApprovalsService } from './approvals/settings-approvals.service';
 import {
+  IUser,
   ISettings,
   ISettingsPromptAccess,
   ISettingsGroup,
@@ -9,7 +7,9 @@ import {
   ISettingsUserResponse,
   ILog,
   IGroupDetails,
-} from './i-settings';
+} from '@cased/data';
+import { axiosInstance } from '../axios';
+import { settingsApprovalsService } from './approvals/settings-approvals.service';
 import {
   IGetGroupResponse,
   ISettingsApiResponse,
