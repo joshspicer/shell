@@ -221,7 +221,7 @@ jobs:
           registry: ghcr.io
           repository: cased
           name: ${{ matrix.chart }}
-          path: ${{ matrix.chart }}
+          path: charts/${{ matrix.chart }}
           tag: ${{ steps.chart.outputs.version }}
           registry_username: ${{ github.repository_owner }}
           registry_password: ${{ secrets.GITHUB_TOKEN }}
