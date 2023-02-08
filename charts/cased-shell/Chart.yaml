@@ -3,8 +3,22 @@ name: cased-shell
 icon: https://github.com/cased.png
 type: application
 home: https://cased.com
-# See https://helm.sh/docs/topics/charts/#charts-and-versioning
-version: '3.0.0-alpha.1'
+# Versioning
+#
+# See https://helm.sh/docs/topics/charts/#charts-and-versioning for
+# requirements.
+#
+# Conventionally:
+#
+# * To denote a new development version, use `N.N.N-alpha.N`.
+# * To denote a new release, use `N.N.N`.
+#
+# To publish a version of the chart with this version number, either;
+#
+# * Add the `helm:push` label to your PR, or
+# * Merge a PR to the default branch
+#
+version: '3.0.0-alpha.2'
 appVersion: '3.0.0'
 maintainers:
   # Required by chart-testing to be a GitHub org slug
