@@ -36,6 +36,7 @@
       file_server {
         root /usr/share/caddy
       }
+      try_files {path} /index.html
     }
 
     handle_errors {
@@ -68,6 +69,7 @@
       file_server {
         root /usr/share/caddy
       }
+      try_files {path} /index.html
     }
 
     handle_errors {
