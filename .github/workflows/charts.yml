@@ -67,7 +67,7 @@ jobs:
         id: charts
         run: |
           set -x
-          echo "ls=$(ls -1d charts | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "ls=$(find charts -maxdepth 1 -mindepth 1 -type d | cut -f 2 -d / | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - name: Construct Chart Matrix
         id: charts-json
