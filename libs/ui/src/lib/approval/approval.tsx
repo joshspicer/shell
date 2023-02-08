@@ -1,6 +1,8 @@
 import { ApprovalStatus } from '@cased/data';
 import clsx from 'clsx';
 import ApprovalStatusIcon from '../approval-status-icon/approval-status-icon';
+import TextDuration from '../text/duration/text-duration';
+
 import TextLink from '../text/text-link/text-link';
 
 type ApprovalProps = {
@@ -13,6 +15,7 @@ type ApprovalProps = {
   status: ApprovalStatus;
   hideActions?: boolean;
   border?: boolean;
+  createdAt: Date;
 };
 
 export function Approval({
@@ -25,6 +28,7 @@ export function Approval({
   status,
   hideActions,
   border,
+  createdAt,
 }: ApprovalProps) {
   return (
     <div
@@ -44,6 +48,12 @@ export function Approval({
         <span className="font-medium text-zinc-900">{requestorEmail}</span>
         <span> is requesting access to </span>
         <span className="font-medium text-zinc-900">{prompt || command}</span>
+        <span>
+          {' '}
+          <small>
+            <TextDuration begin={createdAt} /> ago
+          </small>
+        </span>
       </div>
       <ApprovalStatusIcon
         status={status}

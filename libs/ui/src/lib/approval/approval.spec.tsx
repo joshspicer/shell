@@ -13,6 +13,7 @@ describe('Approval', () => {
         prompt="a-cool-script.sh"
         status={ApprovalStatus.Approved}
         avatarUrl="https://placekitten.com/200/200"
+        createdAt={new Date()}
       />,
       { wrapper: BrowserRouter },
     );

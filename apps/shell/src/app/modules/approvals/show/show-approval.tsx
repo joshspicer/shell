@@ -60,6 +60,7 @@ export function Show() {
           command={approval.command}
           status={approval.status}
           avatarUrl={approval.requestor.avatarUrl}
+          createdAt={approval.createdAt}
           hideActions
         />
 
@@ -70,10 +71,6 @@ export function Show() {
           {approval.command && (
             <ApprovalField label="Command" value={approval.command} />
           )}
-          <ApprovalField
-            label="Location/IP"
-            value={approval.createdAt.toLocaleString()}
-          />
           <ApprovalField
             label="Time"
             value={approval.createdAt.toLocaleString()}

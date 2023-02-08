@@ -13,7 +13,13 @@ to help! Please also check out our resources and docs.
 
 - [Cased Docs](https://docs.cased.com)
 - [GitHub Issues](https://github.com/cased/shell/issues)
-- [Slack](https://join.slack.com/t/cased-workspace/shared_invite/zt-1onqqcgo6-rq56zZoDiLEMpj6yPn19sQ)
+
+#### Community
+
+Have a question? Want to give feedback? We'd love to hear at one of our communities!
+
+- [Slack](https://join.slack.com/t/cased-workspace/shared_invite/zt-1oq9zhot2-8wQfhLm7jcsk~KpxaEeNpg)
+- [Discord](https://discord.gg/kHX9YUGkcK)
 
 ## Just trying it out or developing (using GitHub Codespaces)
 
