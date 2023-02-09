@@ -23,6 +23,10 @@ curl -0 --fail -sk --max-time 1 https://127.0.0.1:8443/_health | grep "ok $GIT_S
 curl --fail -k -v --max-time 1 https://127.0.0.1:8443/ > /tmp/nx.out 2> /tmp/nx.err
 grep '<base href="/">' /tmp/nx.out
 
+# Test NX fallback
+curl --fail -k -v --max-time 1 https://127.0.0.1:8443/some-undefined-path > /tmp/nx.out 2> /tmp/nx.err
+grep '<base href="/">' /tmp/nx.out
+
 # Download all NX assets
 grep -oP "(?<=src=\")[^\"]+(?=\")" /tmp/nx.out | while IFS= read -r line ; do
   name=$(basename "$line" | cut -f 1 -d .)
