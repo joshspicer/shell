@@ -33,9 +33,8 @@
     }
 
     handle {
-      file_server {
-        root /usr/share/caddy
-      }
+      root * /usr/share/caddy
+      file_server
       try_files {path} /index.html
     }
 
@@ -71,10 +70,9 @@
         }
     }
 
-    handle * {
-      file_server {
-        root /usr/share/caddy
-      }
+    handle {
+      root * /usr/share/caddy
+      file_server
       try_files {path} /index.html
     }
 
