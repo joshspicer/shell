@@ -9,6 +9,7 @@ import LogCard from '../../log-card/log-card';
 export function GroupLogs() {
   const params = useParams<{ id: string }>();
   const logs = useStoreState((state) => state.settings.groupLogs);
+  const group = useStoreState((state) => state.settings.groupLogDetails);
   const populate = useStoreActions(
     (actions) => actions.settings.populateGroupLogs,
   );
@@ -48,7 +49,8 @@ export function GroupLogs() {
         activeTab={TabId.Users}
       >
         <TextTitle size="lg">
-          Session logs for group <strong>{params.id}</strong>
+          Session logs for{' '}
+          <strong data-testid="group-logs__name">{group.name}</strong>
         </TextTitle>
 
         {printLogs}

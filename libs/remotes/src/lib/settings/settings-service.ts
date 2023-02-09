@@ -7,6 +7,7 @@ import {
   ISettingsUserResponse,
   ILog,
   IGroupDetails,
+  IEntry,
 } from '@cased/data';
 import { axiosInstance } from '../axios';
 import { settingsApprovalsService } from './approvals/settings-approvals.service';
@@ -183,16 +184,24 @@ const getUserLogs = async (
   };
 };
 
-const getGroupLogs = async (id: string): Promise<ILog[]> => {
+const getGroupLogs = async (
+  id: string,
+): Promise<{ group: IEntry; logs: ILog[] }> => {
   const {
     data: {
-      data: { sessions: allSessions },
+      data: { group, sessions: allSessions },
     },
   } = await axiosInstance.get<ISettingsLogsApiResponse>(
     `/api/sessions/groups/${id}`,
   );
 
-  return transformLogs(allSessions);
+  return {
+    group: {
+      ...group,
+      id: group.id.toString(),
+    },
+    logs: transformLogs(allSessions),
+  };
 };
 
 const setReasonRequired = async (reasonRequired: boolean): Promise<boolean> => {

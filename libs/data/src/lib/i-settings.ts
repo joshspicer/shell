@@ -1,3 +1,5 @@
+import { IEntry } from './i-entry';
+
 export interface ISettings {
   certificateAuthentication: boolean;
   certificateAuthority: boolean;
@@ -73,10 +75,7 @@ export interface ILog {
   };
 }
 
-export interface IGroupDetails {
-  id: string;
-  name: string;
-
+export interface IGroupDetails extends IEntry {
   members: {
     id: string;
     email: string;

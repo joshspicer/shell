@@ -1,7 +1,4 @@
-export interface IEntry {
-  id: string;
-  name: string;
-}
+import { IEntry } from './i-entry';
 
 export interface IRunbookDatabase extends IEntry {
   host?: string;

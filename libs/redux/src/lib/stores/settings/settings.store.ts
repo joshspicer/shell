@@ -24,6 +24,7 @@ export const settingsStore: ISettingsStore = {
   groups: [],
   groupAccess: '',
   groupLogs: [],
+  groupLogDetails: { name: '', id: '' },
   groupDetails: {
     id: '',
     name: '',
@@ -98,6 +99,10 @@ export const settingsStore: ISettingsStore = {
 
   setGroupDetails: action((state, groupDetails) => {
     state.groupDetails = groupDetails;
+  }),
+
+  setGroupLogDetails: action((state, groupLogDetails) => {
+    state.groupLogDetails = groupLogDetails;
   }),
 
   ...settingsThunks,

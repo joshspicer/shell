@@ -48,4 +48,4 @@ class GroupActivitySessionsHandler(BaseMixin, tornado.web.RequestHandler):
         if group:
             sessions = LogEntry().group_sessions(group)
 
-        self.write({"data": {"sessions": sessions}})
+        self.write({"data": {"group": group, "sessions": sessions}})

@@ -16,3 +16,4 @@ export * from './i-user';
 export * from './i-settings';
 export * from './i-api-provider';
 export * from './i-settings-approvals';
+export * from './i-entry';

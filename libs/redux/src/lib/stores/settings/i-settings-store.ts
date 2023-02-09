@@ -8,6 +8,7 @@ import {
   ICasedShellData,
   IGroupDetails,
   IUser,
+  IEntry,
 } from '@cased/data';
 import type { IStoreInjections } from '../store';
 
@@ -27,6 +28,7 @@ export interface ISettingsStore {
   groups: ISettingsGroup[];
   groupAccess: string;
   groupLogs: ILog[];
+  groupLogDetails: IEntry;
   groupDetails: IGroupDetails;
 
   // @TODO Rename setGroup
@@ -35,6 +37,7 @@ export interface ISettingsStore {
   setGroups: Action<ISettingsStore, ISettingsGroup[]>;
   setGroupAccess: Action<ISettingsStore, string>;
   setGroupLogs: Action<ISettingsStore, ILog[]>;
+  setGroupLogDetails: Action<ISettingsStore, IEntry>;
   setGroupDetails: Action<ISettingsStore, IGroupDetails>;
 
   // @TODO Rename as setAllUsers

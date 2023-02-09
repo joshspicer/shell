@@ -54,6 +54,11 @@ export interface ISettingsLogsApiResponse {
       email: string;
     };
 
+    group: {
+      id: number;
+      name: string;
+    };
+
     sessions: ISettingsLogSessionApiResponse[];
   };
 }

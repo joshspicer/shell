@@ -1,21 +1,27 @@
-import { ILog } from '@cased/remotes';
 import { render, waitFor } from '@testing-library/react';
 import { StoreProvider } from 'easy-peasy';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getMockStore } from '@cased/redux';
+import { IEntry, ILog } from '@cased/data';
 
 import GroupLogs from './group-logs';
 
 describe('GroupLogs', () => {
   interface IOptions {
+    group?: IEntry;
     groupLogsResponse?: ILog[];
   }
 
   const setup = (options: IOptions = {}) => {
-    const { groupLogsResponse = [] } = options;
+    const { groupLogsResponse = [], group = { id: '1', name: 'Lorem Ipsum' } } =
+      options;
 
     const settingsService = {
-      getGroupLogs: () => Promise.resolve(groupLogsResponse),
+      getGroupLogs: () =>
+        Promise.resolve({
+          group,
+          logs: groupLogsResponse,
+        }),
     };
 
     window.history.pushState({}, '', `/settings/groups/activity/1`);
@@ -38,6 +44,17 @@ describe('GroupLogs', () => {
     await waitFor(() => findByTestId('group-logs'));
 
     expect(findByTestId('group-logs'));
+  });
+
+  it('should print the group name', async () => {
+    const name = 'Group 1';
+    const group = { name, id: '1' };
+
+    const { findByTestId } = setup({ group });
+    await waitFor(() => findByTestId('group-logs__name'));
+    const result = await findByTestId('group-logs__name');
+
+    expect(result.textContent).toContain('Group 1');
   });
 
   it('should print out logs', async () => {
