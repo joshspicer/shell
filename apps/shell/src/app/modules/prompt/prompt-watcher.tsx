@@ -6,7 +6,7 @@ import { Debounce } from '@cased/utilities';
 import './xterm.scss';
 import { promptService } from '@cased/remotes';
 import { factory } from '@cased/redux';
-import PromptSearch from './prompt-search';
+import PromptSearch from './search/prompt-search';
 import { ansi } from './prompt.ansi';
 import { startLoadingMessage } from './prompt.loader';
 
@@ -92,7 +92,7 @@ export default function PromptWatcher() {
   return (
     <div className="relative h-full">
       <div className="absolute right-8 top-2 z-10 flex gap-6 bg-[rgba(0,0,0,0.5)]">
-        <PromptSearch terminal={terminal} />
+        {terminal ? <PromptSearch terminal={terminal} /> : null}
       </div>
       <div className="xterm h-full bg-black p-1" ref={termEl} />
     </div>

@@ -13,7 +13,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { startLoadingMessage } from './prompt.loader';
 import './xterm.scss';
 import { ansi } from './prompt.ansi';
-import PromptSearch from './prompt-search';
+import PromptSearch from './search/prompt-search';
 import PromptDownload from './prompt-download';
 import PromptShare from './prompt-share';
 
@@ -109,7 +109,7 @@ export default function Prompt({ slug }: IProps) {
     <div className="relative h-full">
       <span data-testid="prompt-terminal" />
       <div className="absolute right-8 top-2 z-10 flex gap-6 bg-[rgba(0,0,0,0.5)]">
-        <PromptSearch terminal={terminal} />
+        {terminal ? <PromptSearch terminal={terminal} /> : null}
         <PromptDownload promptSlug={slug} />
         <PromptShare />
       </div>
