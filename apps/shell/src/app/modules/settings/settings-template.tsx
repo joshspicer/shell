@@ -1,4 +1,4 @@
-import { Button } from '@cased/ui';
+import { TextLink } from '@cased/ui';
 import clsx from 'clsx';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
@@ -92,16 +92,11 @@ export function SettingsTemplate({
     const { link, title } = returnButton;
 
     return (
-      <div>
-        <Button
-          className="ml-0 pl-0"
-          as={<Link to={link} />}
-          size="small"
-          display="link"
-        >
+      <p>
+        <TextLink className="ml-0 pl-0" to={link}>
           {title}
-        </Button>
-      </div>
+        </TextLink>
+      </p>
     );
   }, [returnButton]);
 

@@ -1,4 +1,4 @@
-import { ApprovalType, IApprovalProgram, IUserLabel } from '@cased/remotes';
+import { ApprovalType, IApprovalProgram, IUserLabel } from '@cased/data';
 
 export class ApprovalProgramBuilder {
   private _approvalType: ApprovalType = ApprovalType.anyone;

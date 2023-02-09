@@ -1,8 +1,6 @@
+import { IApiProvider } from '@cased/data';
 import { axiosInstance } from '../../axios';
-import {
-  IApiProvider,
-  settingsRunbooksService,
-} from './settings-runbooks.service';
+import { settingsRunbooksService } from './settings-runbooks.service';
 
 describe('SettingsRunbooksService', () => {
   describe('getDatabase method', () => {

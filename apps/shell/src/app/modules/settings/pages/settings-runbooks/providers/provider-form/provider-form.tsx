@@ -1,4 +1,4 @@
-import { IApiProvider } from '@cased/remotes';
+import { IApiProvider } from '@cased/data';
 import { Button, FormInputText, FormPartialHiddenPassword } from '@cased/ui';
 import { useCallback, useMemo } from 'react';
 

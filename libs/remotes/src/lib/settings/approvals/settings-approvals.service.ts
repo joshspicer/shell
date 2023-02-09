@@ -1,12 +1,12 @@
-import { axiosInstance } from '../../axios';
 import {
+  IApprovalBase as IApproval,
   ApprovalType,
-  IApproval,
   IApprovalAccess,
   IApprovalProgram,
   IApprovalSettingsApiObject,
   IUserLabel,
-} from './i-settings-approvals';
+} from '@cased/data';
+import { axiosInstance } from '../../axios';
 
 const getApprovals = async (): Promise<{
   programs: IApproval[];

@@ -3,12 +3,12 @@ export interface IUserLabel {
   name: string;
 }
 
-export interface IApproval {
+export interface IApprovalBase {
   id: string;
   name: string;
 }
 
-export interface IApprovalAccess extends IApproval {
+export interface IApprovalAccess extends IApprovalBase {
   reasonRequired: boolean;
   blockNewSessions: boolean;
   sessionApprovalDuration: number;

@@ -1,9 +1,9 @@
-import { ILog } from '@cased/remotes';
+import { ILog, IUser } from '@cased/remotes';
 import { render, waitFor } from '@testing-library/react';
 import { StoreProvider } from 'easy-peasy';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getMockStore } from '@cased/redux';
-
+import { A } from '@cased/test-utilities';
 import UserLogs from './user-logs';
 
 describe('UserLogs', () => {
@@ -16,11 +16,14 @@ describe('UserLogs', () => {
   };
 
   interface IOptions {
-    userLogsResponse?: ILog[];
+    userLogsResponse?: {
+      logs: ILog[];
+      user: IUser;
+    };
   }
 
   const setup = (options: IOptions = {}) => {
-    const { userLogsResponse = [] } = options;
+    const { userLogsResponse = { logs: [], user: A.user().build() } } = options;
 
     const settingsService = {
       getUserLogs: () => Promise.resolve(userLogsResponse),
@@ -42,7 +45,9 @@ describe('UserLogs', () => {
   };
 
   const matchTextWithResponse = async (text: string, response: ILog) => {
-    const { findByText } = setup({ userLogsResponse: [response] });
+    const { findByText } = setup({
+      userLogsResponse: { user: A.user().build(), logs: [response] },
+    });
     await waitFor(() => findByText(text));
 
     expect(findByText(text)).toBeTruthy();
@@ -54,6 +59,38 @@ describe('UserLogs', () => {
     await waitFor(() => findByTestId('user-logs'));
 
     expect(findByTestId('user-logs')).toBeTruthy();
+  });
+
+  it('should print out the name of the existing user', async () => {
+    const name = 'Gambit';
+
+    const { findByTestId } = setup({
+      userLogsResponse: {
+        user: A.user().withName(name).build(),
+        logs: [{ ...defaultLog }],
+      },
+    });
+
+    await waitFor(async () => {
+      const result = await findByTestId('user-logs__name');
+      expect(result.textContent).toContain(name);
+    });
+  });
+
+  it('should print out the email of the existing user', async () => {
+    const email = 'rogue@gmail.com';
+
+    const { findByTestId } = setup({
+      userLogsResponse: {
+        user: A.user().withEmail(email).build(),
+        logs: [{ ...defaultLog }],
+      },
+    });
+
+    await waitFor(async () => {
+      const result = await findByTestId('user-logs__email');
+      expect(result.textContent).toContain(email);
+    });
   });
 
   describe('runbooks', () => {
@@ -95,15 +132,18 @@ describe('UserLogs', () => {
   describe('approvals', () => {
     it('should print the reason', async () => {
       const { findByTestId } = setup({
-        userLogsResponse: [
-          {
-            ...defaultLog,
-            approval: {
-              id: '1',
-              reason: 'User requested access',
+        userLogsResponse: {
+          user: A.user().build(),
+          logs: [
+            {
+              ...defaultLog,
+              approval: {
+                id: '1',
+                reason: 'User requested access',
+              },
             },
-          },
-        ],
+          ],
+        },
       });
 
       await waitFor(() => findByTestId('log-card__reason'));

@@ -1,4 +1,4 @@
-import { ILog } from '@cased/remotes';
+import { ILog } from '@cased/data';
 import { Action, action, Thunk, thunk } from 'easy-peasy';
 
 import { dispatchSetLoading } from '../loading/loading.store';
