@@ -8,7 +8,7 @@ import {
 } from '@cased/ui';
 import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ApprovalType, IApprovalAccess } from '@cased/remotes';
+import { ApprovalType, IApprovalAccess } from '@cased/data';
 import { useStoreActions } from '@cased/redux';
 import ReadyGuard from '../../../../../../guards/ready/ready-guard';
 import SettingsTemplate, { TabId } from '../../../../settings-template';

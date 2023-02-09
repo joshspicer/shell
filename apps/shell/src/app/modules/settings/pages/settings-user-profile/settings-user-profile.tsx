@@ -1,6 +1,6 @@
 import { TextTitle } from '@cased/ui';
 import { useCallback, useMemo, useState } from 'react';
-import { IUser } from '@cased/remotes';
+import { IUser } from '@cased/data';
 import { useStoreActions } from '@cased/redux';
 import SettingsTemplate, { TabId } from '../../settings-template';
 import ReadyGuard from '../../../../guards/ready/ready-guard';

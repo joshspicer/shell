@@ -1,4 +1,4 @@
-import { IApiProvider, IRunbookDatabase } from '@cased/remotes';
+import { IApiProvider, IRunbookDatabase } from '@cased/data';
 import {
   fireEvent,
   render,

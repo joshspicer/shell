@@ -131,6 +131,11 @@ def make_handlers(loop, options):
             dict(loop=loop),
         ),
         (
+            r"/api/meta",
+            APIMetaController,
+            dict(loop=loop),
+        ),
+        (
             r"/api/github/app-manifest-conversion",
             APIGitHubAuthController,
             dict(loop=loop),

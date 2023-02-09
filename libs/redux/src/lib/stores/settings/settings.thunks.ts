@@ -204,8 +204,9 @@ export const settingsThunks: Pick<
       dispatchSetLoading(dispatch, true);
 
       try {
-        const userLogs = await settingsService.getGroupLogs(id);
-        actions.setGroupLogs(userLogs);
+        const { logs, group } = await settingsService.getGroupLogs(id);
+        actions.setGroupLogs(logs);
+        actions.setGroupLogDetails(group);
       } catch (e) {
         dispatchSet404(dispatch, true);
       }

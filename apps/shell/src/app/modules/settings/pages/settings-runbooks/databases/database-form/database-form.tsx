@@ -1,4 +1,4 @@
-import { IRunbookDatabase } from '@cased/remotes';
+import { IRunbookDatabase } from '@cased/data';
 import { Button, FormInputText, FormPartialHiddenPassword } from '@cased/ui';
 import { useCallback } from 'react';
 

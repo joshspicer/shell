@@ -8,7 +8,7 @@ import {
   FormInputNumber,
 } from '@cased/ui';
 import { useCallback, useState } from 'react';
-import { ApprovalType, IApprovalProgram } from '@cased/remotes';
+import { ApprovalType, IApprovalProgram } from '@cased/data';
 import { useParams } from 'react-router-dom';
 import { useStoreActions } from '@cased/redux';
 import SettingsTemplate, { TabId } from '../../../../settings-template';

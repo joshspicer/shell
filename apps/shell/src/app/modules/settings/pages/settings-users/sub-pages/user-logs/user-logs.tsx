@@ -9,6 +9,7 @@ import LogCard from '../../log-card/log-card';
 export function UserLogs() {
   const params = useParams<{ id: string }>();
   const logs = useStoreState((state) => state.settings.userLogs);
+  const user = useStoreState((state) => state.settings.userLogsAuthor);
   const populate = useStoreActions(
     (actions) => actions.settings.populateUserLogs,
   );
@@ -48,7 +49,9 @@ export function UserLogs() {
         activeTab={TabId.Users}
       >
         <TextTitle size="lg">
-          Session logs for user <strong>{params.id}</strong>
+          Session logs for{' '}
+          <strong data-testid="user-logs__name">{user.name}</strong>{' '}
+          <span data-testid="user-logs__email">({user.email})</span>
         </TextTitle>
 
         {printLogs}
