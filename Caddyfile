@@ -20,19 +20,19 @@
 	    respond "ok {$GIT_SHA}" 200
     }
 
-    handle /api* {
+    handle /api/* {
         reverse_proxy localhost:8888 {
           trusted_proxies private_ranges
         }
     }
 
-    handle /v2* {
+    handle /v2/* {
         reverse_proxy localhost:8888 {
           trusted_proxies private_ranges
         }
     }
 
-    handle * {
+    handle {
       file_server {
         root /usr/share/caddy
       }
@@ -59,7 +59,13 @@
 	    respond "ok {$GIT_SHA}" 200
     }
 
-    handle /v2* {
+    handle /api/* {
+        reverse_proxy localhost:8888 {
+          trusted_proxies private_ranges
+        }
+    }
+
+    handle /v2/* {
         reverse_proxy localhost:8888 {
           trusted_proxies private_ranges
         }
