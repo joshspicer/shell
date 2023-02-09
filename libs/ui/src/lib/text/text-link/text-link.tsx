@@ -25,7 +25,7 @@ export function TextLink({
 }: TextLinkProps) {
   const link = useMemo(() => {
     const target = targetBlank ? '_blank' : undefined;
-    const className = clsx('text-blue-600', classNameProp, {
+    const className = clsx(classNameProp, {
       'text-blue-600': display === 'default',
       'text-red-500': display === 'danger',
     });
