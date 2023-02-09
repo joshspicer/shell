@@ -4,6 +4,13 @@
 
 This is the open preview of Cased.
 
+Cased is a platform for making daily DevOps work better, with things like:
+
+* Minimal-config SSH certificates, integrated with your identity provider
+* Automated runbooks for common operational tasks
+* Approvals and access control to production systems
+* Compliant logging and visibility
+
 During this preview, we highly recommend you reach out to us at team@cased.com. We're happy
 to help! Please also check out our resources and docs.
 
