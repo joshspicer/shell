@@ -36,7 +36,7 @@ RUN curl -sL -o /tmp/go.tar.gz https://go.dev/dl/go${GO_VERSION}.linux-${TARGETA
     ln -s /usr/local/go/bin/go /usr/local/bin/go
 
 FROM cased-devcontainer-base as cased-helm
-ENV HELM_VERSION=3.11.0
+ENV HELM_VERSION=3.11.1
 RUN curl -1sLf --connect-timeout 30 --retry 3 https://raw.githubusercontent.com/devcontainers/features/main/src/kubectl-helm-minikube/install.sh > /usr/local/bin/kubectl-helm-minikube.sh && \
     chmod +x /usr/local/bin/kubectl-helm-minikube.sh && \
     HELM=${HELM_VERSION} /usr/local/bin/kubectl-helm-minikube.sh
