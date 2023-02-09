@@ -30,6 +30,7 @@ export default function ApprovalsBlock({
             command={approval.prompt}
             status={approval.status}
             avatarUrl={approval.requestor.avatarUrl}
+            createdAt={approval.createdAt}
           />
         </CardBlock>
       ))}

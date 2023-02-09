@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+      - gh-readonly-queue/main/*
   # Build and push images on PRs with the docker:pr-image label
   pull_request:
     types:

@@ -18,6 +18,7 @@ import re
 from camel_converter import dict_to_camel
 
 from datetime import datetime
+from dateutil.tz import tzlocal
 from tornado.options import options
 from random import randint
 import tornado.web
@@ -1486,7 +1487,7 @@ class CasedEncoder(json.JSONEncoder):
                     return dict_to_camel(obj.to_dict(nested=self.nested))
         if isinstance(obj, datetime):
             if obj:
-                return obj.isoformat()
+                return obj.replace(tzinfo=tzlocal()).isoformat()
         elif isinstance(obj, Iterable):
             return list(obj)
 

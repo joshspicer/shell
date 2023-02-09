@@ -47,7 +47,8 @@ export function LogCard({
       const { id, name, date } = runbook;
       return (
         <TextBlock>
-          <strong>{email}</strong> executed a{' '}
+          <strong className="font-medium text-gray-900">{email}</strong>{' '}
+          executed a{' '}
           <TextLink to={`/runbooks/${id}`}>runbook ({name})</TextLink> at{' '}
           <TextDate display="dateTime" date={date} />
         </TextBlock>

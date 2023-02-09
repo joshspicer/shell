@@ -2,8 +2,6 @@
 <!-- update with yarn charts:docs -->
 # cased-shell
 
-![Version: 3.0.0-alpha.1](https://img.shields.io/badge/Version-3.0.0--alpha.1-informational?style=flat-square) ![AppVersion: 3.0.0](https://img.shields.io/badge/AppVersion-3.0.0-informational?style=flat-square)
-
 **Homepage:** <https://cased.com>
 
 ## Requirements

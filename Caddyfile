@@ -32,10 +32,10 @@
         }
     }
 
-    handle * {
-      file_server {
-        root /usr/share/caddy
-      }
+    handle {
+      root * /usr/share/caddy
+      file_server
+      try_files {path} /index.html
     }
 
     handle_errors {
@@ -58,16 +58,22 @@
 	    respond "ok {$GIT_SHA}" 200
     }
 
+    handle /api* {
+        reverse_proxy localhost:8888 {
+          trusted_proxies private_ranges
+        }
+    }
+
     handle /v2* {
         reverse_proxy localhost:8888 {
           trusted_proxies private_ranges
         }
     }
 
-    handle * {
-      file_server {
-        root /usr/share/caddy
-      }
+    handle {
+      root * /usr/share/caddy
+      file_server
+      try_files {path} /index.html
     }
 
     handle_errors {

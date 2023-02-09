@@ -1,0 +1,229 @@
+name: Charts - Required
+
+on:
+  push:
+    branches:
+      - main
+      - gh-readonly-queue/main/*
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - labeled
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore
+    paths:
+      - '.github/workflows/charts-lint-test.yml'
+      - 'charts/**'
+      - chart_schema.yaml
+      - lintconf.yaml
+      - ct.yaml
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    # Only run on PR-labeling events if the label is helm:push
+    if: |
+      github.event.action != 'labeled' ||
+      ( github.event.action == 'labeled' && github.event.label.name == 'helm:push')
+    outputs:
+      charts: ${{ steps.charts-json.outputs.result }}
+      tests: ${{ steps.tests-json.outputs.result }}
+      changed: ${{ steps.list-changed.outputs.changed }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        helm_version:
+          # oldest known supported
+          - v3.10.1
+          - latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: ${{ matrix.helm_version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10.x
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2
+
+      - name: Run chart-testing (lint)
+        run: ct lint --config ct.yaml
+
+      - name: List charts
+        id: charts
+        run: |
+          set -x
+          echo "ls=$(find charts -maxdepth 1 -mindepth 1 -type d | cut -f 2 -d / | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+      - name: Construct Chart Matrix
+        id: charts-json
+        uses: actions/github-script@v6
+        env:
+          CHARTS: ${{ steps.charts.outputs.ls }}
+        with:
+          script: |
+            return process.env.CHARTS.split(" ").filter(dir => dir.length > 0)
+
+      - name: List tests
+        id: tests
+        run: |
+          set -x
+          echo "ls=$(ls -1 charts/*/ci/* | sed 's/.yaml//' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+      - name: Construct Test Matrix
+        id: tests-json
+        uses: actions/github-script@v6
+        env:
+          TESTS: ${{ steps.tests.outputs.ls }}
+        with:
+          script: |
+            return process.env.TESTS.split(" ").filter(t => t.length > 0).map((r,i) => {return { chart: r.split("/")[1], test: r.split("/")[3] }})
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          set -x
+          changed=$(ct list-changed --config ct.yaml)
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+  test:
+    name: Test charts/${{ matrix.chart }}/ci/${{ matrix.test }}.yaml on Helm ${{ matrix.helm_version }}
+    runs-on: ubuntu-latest
+    needs: lint
+    # Runs on all pushes to the default branch and if the lint job detects
+    # changes.
+    if: |
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch) ||
+      contains(github.ref, format('gh-readonly-queue/{0}/', github.event.repository.default_branch)) ||
+      needs.lint.outputs.changed == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{fromJson(needs.lint.outputs.tests)}}
+        helm_version:
+          # oldest known supported
+          - v3.10.1
+          - latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Remove tests other than charts/${{ matrix.chart }}/ci/${{ matrix.test }}.yaml
+        run: |
+          for f in $(ls -1 charts/*/ci/* | grep -v charts/${{ matrix.chart}}); do
+            rm -v $f
+          done
+          for f in $(ls -1 charts/*/ci/* | grep -v /ci/${{ matrix.test }}.yaml); do
+            rm -v $f
+          done
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: ${{ matrix.helm_version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10.x
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2
+
+      - uses: debianmaster/actions-k3s@v1.0.5
+        with:
+          version: 'latest'
+
+      # This optimization will work once a new release of chart-testing is cut
+      # containing https://github.com/helm/chart-testing/pull/478
+      - name: Modify chart-testing config for GitHub Actions
+        run: |
+          docker run -i --rm -v "${PWD}":/workdir -w /workdir mikefarah/yq:4 -P \
+            ".skip-clean-up = true" \
+            ct.yaml > ct-actions.yaml
+            cat ct-actions.yaml
+
+      - name: Run chart-testing (install)
+        run: |
+          if ! ct install --config ct-actions.yaml; then
+            set -x
+            kubectl get pods --all-namespaces
+            kubectl get svc --all-namespaces
+            kubectl get endpoints --all-namespaces
+            exit 1
+          fi
+
+  push:
+    name: Push oci://ghcr.io/cased/${{ matrix.chart }}
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    # Runs on pushes to the default branch to get version bumps. Only runs on
+    # PRs if we have the right label since many PRs can contain an incremented
+    # version.
+    if: |
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch) ||
+      contains(github.event.pull_request.labels.*.name, 'helm:push')
+    strategy:
+      fail-fast: false
+      matrix:
+        chart: ${{fromJson(needs.lint.outputs.charts)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Determine chart version
+        id: chart
+        run: |
+          set -x
+          version="$(docker run -i --rm -v "${PWD}":/workdir -w /workdir mikefarah/yq:4 '.version' < charts/${{ matrix.chart }}/Chart.yaml)"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Chart | Push
+        uses: appany/helm-oci-chart-releaser@v0.4.0
+        with:
+          # From
+          # https://github.com/helm/community/blob/main/hips/hip-0006.md#4-chart-names--oci-reference-basenames:
+          #
+          # > to keep things simple, the basename (the last segment of the URL
+          # > path) on a registry reference should be equivalent to the chart
+          # > name.
+          #
+          # The below configuration results in the following chart references:
+          #
+          #   oci://ghcr.io/cased/cased-shell:0.1.0
+          #
+          registry: ghcr.io
+          repository: cased
+          name: ${{ matrix.chart }}
+          path: charts/${{ matrix.chart }}
+          tag: ${{ steps.chart.outputs.version }}
+          registry_username: ${{ github.repository_owner }}
+          registry_password: ${{ secrets.GITHUB_TOKEN }}

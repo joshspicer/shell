@@ -1,5 +1,6 @@
 name: Frontend Code Quality Check - Required
 on:
+  merge_group:
   pull_request:
     types:
       - opened

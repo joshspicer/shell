@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 export interface TextDurationProps {
   begin: Date;
-  end: Date;
+  end?: Date;
 }
 
 const plural = (word: string, value: number) => (value > 1 ? `${word}s` : word);
@@ -10,7 +10,7 @@ const plural = (word: string, value: number) => (value > 1 ? `${word}s` : word);
 /**
  * Automatically handles formatting a duration between two dates. Always returns a duration of at least 1 second.
  */
-export function TextDuration({ begin, end }: TextDurationProps) {
+export function TextDuration({ begin, end = new Date() }: TextDurationProps) {
   const duration = useMemo(() => {
     const diff = end.getTime() - begin.getTime();
     const diffInMinutes = diff / 1000 / 60;
