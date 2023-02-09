@@ -8,6 +8,7 @@ export interface ButtonPrimaryProps {
   display?: 'default' | 'primary' | 'link' | 'danger';
   outline?: boolean;
   size?: 'small' | 'default' | 'large';
+  disabled?: boolean;
   className?: string;
 
   /**
@@ -28,6 +29,7 @@ export function Button({
   display = 'default',
   size = 'default',
   outline = false,
+  disabled = false,
   className,
   as,
 }: ButtonPrimaryProps) {
@@ -66,11 +68,16 @@ export function Button({
     }
 
     return (
-      <button onClick={onClick} type={type} className={classNames}>
+      <button
+        onClick={onClick}
+        type={type}
+        className={classNames}
+        disabled={disabled}
+      >
         {children}
       </button>
     );
-  }, [children, onClick, type, classNames, as]);
+  }, [as, onClick, type, classNames, disabled, children]);
 
   return printButton;
 }
