@@ -11,6 +11,7 @@ export interface TextLinkProps {
   to?: string;
   onClick?: () => void;
   display?: 'default' | 'danger';
+  className?: string;
 }
 
 export function TextLink({
@@ -19,11 +20,12 @@ export function TextLink({
   children,
   targetBlank,
   display = 'default',
+  className: classNameProp,
   onClick,
 }: TextLinkProps) {
   const link = useMemo(() => {
     const target = targetBlank ? '_blank' : undefined;
-    const className = clsx('text-blue-600', {
+    const className = clsx('text-blue-600', classNameProp, {
       'text-blue-600': display === 'default',
       'text-red-500': display === 'danger',
     });
@@ -53,7 +55,7 @@ export function TextLink({
     }
 
     return children;
-  }, [href, to, children, targetBlank, display, onClick]);
+  }, [href, to, children, targetBlank, display, onClick, classNameProp]);
 
   return <span>{link}</span>;
 }
