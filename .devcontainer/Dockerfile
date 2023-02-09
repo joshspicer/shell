@@ -35,6 +35,12 @@ RUN curl -sL -o /tmp/go.tar.gz https://go.dev/dl/go${GO_VERSION}.linux-${TARGETA
     && rm /tmp/go.tar.gz && \
     ln -s /usr/local/go/bin/go /usr/local/bin/go
 
+FROM cased-devcontainer-base as cased-helm
+ENV HELM_VERSION=3.11.1
+RUN curl -1sLf --connect-timeout 30 --retry 3 https://raw.githubusercontent.com/devcontainers/features/main/src/kubectl-helm-minikube/install.sh > /usr/local/bin/kubectl-helm-minikube.sh && \
+    chmod +x /usr/local/bin/kubectl-helm-minikube.sh && \
+    HELM=${HELM_VERSION} /usr/local/bin/kubectl-helm-minikube.sh
+
 FROM cased-golang as cased-caddy
 ENV CADDY_VERSION=v2.6.2
 RUN apt-get clean && apt-get update && \
@@ -55,7 +61,6 @@ RUN apt-get clean && apt-get update && \
     caddy version
 
 FROM cased-devcontainer-base as cased-devcontainer
-ENV HELM_VERSION=3.11.0
 # OS
 RUN curl -fsSL -o /usr/share/keyrings/githubcli-archive-keyring.gpg https://cli.github.com/packages/githubcli-archive-keyring.gpg &&  \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | \
@@ -99,10 +104,6 @@ RUN curl -fsSL -o /usr/share/keyrings/githubcli-archive-keyring.gpg https://cli.
     chmod +x /usr/local/bin/docker-debian.sh && \
     /usr/local/bin/docker-debian.sh true /var/run/docker-host.sock /var/run/docker.sock automatic ${_BUILD_ARG_DOCKER_FROM_DOCKER_MOBY:-true} ${_BUILD_ARG_DOCKER_FROM_DOCKER_VERSION:-latest} && \
     test -x /usr/local/share/docker-init.sh && \
-    : kubernetes and helm && \
-    curl -1sLf --connect-timeout 30 --retry 3 https://raw.githubusercontent.com/devcontainers/features/main/src/kubectl-helm-minikube/install.sh > /usr/local/bin/kubectl-helm-minikube.sh && \
-    chmod +x /usr/local/bin/kubectl-helm-minikube.sh && \
-    HELM=${HELM_VERSION} /usr/local/bin/kubectl-helm-minikube.sh && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
@@ -136,6 +137,8 @@ COPY --link --from=cased-chart-testing /usr/local/bin/ct /usr/local/bin/ct
 COPY --link --from=cased-aws /usr/local/bin/aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
 COPY --link --from=cased-golang /usr/local/go /usr/local/go
 COPY --link --from=cased-golang /usr/local/bin/go /usr/local/bin/go
+COPY --link --from=cased-helm /usr/local/bin/kubectl /usr/local/bin/kubectl
+COPY --link --from=cased-helm /usr/local/bin/helm /usr/local/bin/helm
 COPY --link --from=cased-caddy /usr/local/bin/caddy /usr/local/bin/caddy
 
 COPY --link --chown=1000:1000 requirements.txt /code/
