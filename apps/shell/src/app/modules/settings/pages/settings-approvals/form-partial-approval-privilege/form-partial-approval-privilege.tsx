@@ -1,4 +1,3 @@
-import { ApprovalType } from '@cased/remotes';
 import {
   CardBlock,
   CardTitle,
@@ -7,7 +6,7 @@ import {
   FormRadio,
   IRadioOption,
 } from '@cased/ui';
-import { ILabel } from '@cased/data';
+import { ILabel, ApprovalType } from '@cased/data';
 import { useCallback } from 'react';
 import { useStoreState, useStoreActions } from '@cased/redux';
 

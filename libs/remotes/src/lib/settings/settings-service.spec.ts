@@ -1,7 +1,8 @@
+import { A } from '@cased/test-utilities';
+import { IGroupDetails } from '@cased/data';
 import { settingsService } from './settings-service';
 import { axiosInstance } from '../axios';
 import { IGetGroupResponse } from './i-settings-api-response';
-import { IGroupDetails } from './i-settings';
 
 describe('settingsService', () => {
   describe('connectToGithub', () => {
@@ -201,6 +202,8 @@ describe('settingsService', () => {
   });
 
   describe('getUserLogs method', () => {
+    const defaultUser = A.user().build();
+
     const defaultSession = {
       id: 1,
       start_time: new Date().toString(),
@@ -227,18 +230,22 @@ describe('settingsService', () => {
 
     it('should return an ongoing session', async () => {
       const data = {
+        user: { ...defaultUser },
         sessions: [{ ...defaultSession }],
       };
 
-      const expected = [
-        {
-          ...defaultExpect,
-          session: {
-            id: '1',
-            startTime: expect.any(Date),
+      const expected = {
+        user: { ...defaultUser },
+        logs: [
+          {
+            ...defaultExpect,
+            session: {
+              id: '1',
+              startTime: expect.any(Date),
+            },
           },
-        },
-      ];
+        ],
+      };
 
       jest.spyOn(axiosInstance, 'get').mockResolvedValueOnce({
         data: { data },
@@ -251,6 +258,8 @@ describe('settingsService', () => {
 
     it('should return a runbook', async () => {
       const data = {
+        user: { ...defaultUser },
+
         sessions: [
           {
             ...defaultSession,
@@ -262,16 +271,19 @@ describe('settingsService', () => {
         ],
       };
 
-      const expected = [
-        {
-          ...defaultExpect,
-          runbook: {
-            id: '1',
-            name: 'runbook1',
-            date: expect.any(Date),
+      const expected = {
+        user: defaultUser,
+        logs: [
+          {
+            ...defaultExpect,
+            runbook: {
+              id: '1',
+              name: 'runbook1',
+              date: expect.any(Date),
+            },
           },
-        },
-      ];
+        ],
+      };
 
       jest.spyOn(axiosInstance, 'get').mockResolvedValueOnce({
         data: { data },
@@ -284,6 +296,7 @@ describe('settingsService', () => {
 
     it('should return an approval', async () => {
       const data = {
+        user: { ...defaultUser },
         sessions: [
           {
             ...defaultSession,
@@ -295,16 +308,19 @@ describe('settingsService', () => {
         ],
       };
 
-      const expected = [
-        {
-          ...defaultExpect,
-          approval: {
-            id: '1',
-            reason: 'reason',
+      const expected = {
+        user: defaultUser,
+        logs: [
+          {
+            ...defaultExpect,
+            approval: {
+              id: '1',
+              reason: 'reason',
+            },
+            session: expect.any(Object),
           },
-          session: expect.any(Object),
-        },
-      ];
+        ],
+      };
 
       jest.spyOn(axiosInstance, 'get').mockResolvedValueOnce({
         data: { data },

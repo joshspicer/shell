@@ -1,16 +1,16 @@
 import { Action, Thunk } from 'easy-peasy';
-import { IApproval, IApprovalAccess, IApprovalProgram } from '@cased/remotes';
+import { IApprovalBase, IApprovalAccess, IApprovalProgram } from '@cased/data';
 import type { ILabel } from '@cased/data';
 import type { IStoreInjections } from '../store';
 
 export interface ISettingsApprovalsStore {
-  programs: IApproval[];
-  access: IApproval[];
+  programs: IApprovalBase[];
+  access: IApprovalBase[];
   approvalUsersSearch: ILabel[];
   approvedUsers: ILabel[];
 
-  setPrograms: Action<ISettingsApprovalsStore, { programs: IApproval[] }>;
-  setAccess: Action<ISettingsApprovalsStore, { access: IApproval[] }>;
+  setPrograms: Action<ISettingsApprovalsStore, { programs: IApprovalBase[] }>;
+  setAccess: Action<ISettingsApprovalsStore, { access: IApprovalBase[] }>;
   setApprovalUsersSearch: Action<ISettingsApprovalsStore, { users: ILabel[] }>;
   setApprovedUsers: Action<ISettingsApprovalsStore, { users: ILabel[] }>;
   removeProgram: Action<ISettingsApprovalsStore, { id: string }>;

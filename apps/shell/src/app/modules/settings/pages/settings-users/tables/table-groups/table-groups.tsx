@@ -8,7 +8,7 @@ import {
   TableRow,
   TextLink,
 } from '@cased/ui';
-import { ISettingsGroup } from '@cased/remotes';
+import { ISettingsGroup } from '@cased/data';
 
 export interface TableGroupsProps {
   list: ISettingsGroup[];

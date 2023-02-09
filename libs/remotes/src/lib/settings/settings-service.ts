@@ -1,6 +1,5 @@
-import { axiosInstance } from '../axios';
-import { settingsApprovalsService } from './approvals/settings-approvals.service';
 import {
+  IUser,
   ISettings,
   ISettingsPromptAccess,
   ISettingsGroup,
@@ -8,7 +7,10 @@ import {
   ISettingsUserResponse,
   ILog,
   IGroupDetails,
-} from './i-settings';
+  IEntry,
+} from '@cased/data';
+import { axiosInstance } from '../axios';
+import { settingsApprovalsService } from './approvals/settings-approvals.service';
 import {
   IGetGroupResponse,
   ISettingsApiResponse,
@@ -165,28 +167,41 @@ const setPromptAccess = async (
   await axiosInstance.post(`/api/prompt-access?type=${type}`, value);
 };
 
-const getUserLogs = async (id: string): Promise<ILog[]> => {
+const getUserLogs = async (
+  id: string,
+): Promise<{ user: IUser; logs: ILog[] }> => {
   const {
     data: {
-      data: { sessions: allSessions },
+      data: { user, sessions: allSessions },
     },
   } = await axiosInstance.get<ISettingsLogsApiResponse>(
     `/api/sessions/users/${id}`,
   );
 
-  return transformLogs(allSessions);
+  return {
+    user: { ...user, id: user.id.toString() },
+    logs: transformLogs(allSessions),
+  };
 };
 
-const getGroupLogs = async (id: string): Promise<ILog[]> => {
+const getGroupLogs = async (
+  id: string,
+): Promise<{ group: IEntry; logs: ILog[] }> => {
   const {
     data: {
-      data: { sessions: allSessions },
+      data: { group, sessions: allSessions },
     },
   } = await axiosInstance.get<ISettingsLogsApiResponse>(
     `/api/sessions/groups/${id}`,
   );
 
-  return transformLogs(allSessions);
+  return {
+    group: {
+      ...group,
+      id: group.id.toString(),
+    },
+    logs: transformLogs(allSessions),
+  };
 };
 
 const setReasonRequired = async (reasonRequired: boolean): Promise<boolean> => {

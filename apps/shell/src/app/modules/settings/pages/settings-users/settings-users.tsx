@@ -9,7 +9,7 @@ import {
   TextTitle,
 } from '@cased/ui';
 import { useSearchParams } from 'react-router-dom';
-import { ISettingsUser } from '@cased/remotes';
+import { ISettingsUser } from '@cased/data';
 import { useStoreActions, useStoreState } from '@cased/redux';
 import ReadyGuard from '../../../../guards/ready/ready-guard';
 import SettingsTemplate, { TabId } from '../../settings-template';

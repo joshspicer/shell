@@ -1,4 +1,4 @@
-import { IRunbookDatabase } from '@cased/remotes';
+import { IRunbookDatabase } from '@cased/data';
 
 export class RunbookDatabaseBuilder {
   private _id = '22';

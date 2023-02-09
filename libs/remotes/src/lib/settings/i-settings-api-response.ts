@@ -48,6 +48,17 @@ export interface ISettingsLogSessionApiResponse {
 
 export interface ISettingsLogsApiResponse {
   data: {
+    user: {
+      id: number;
+      name: string;
+      email: string;
+    };
+
+    group: {
+      id: number;
+      name: string;
+    };
+
     sessions: ISettingsLogSessionApiResponse[];
   };
 }

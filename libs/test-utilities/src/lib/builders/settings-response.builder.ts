@@ -1,4 +1,4 @@
-import { ISettings } from '@cased/remotes';
+import { ISettings } from '@cased/data';
 
 export class SettingsReponseBuilder {
   private certificateAuthentication = false;
