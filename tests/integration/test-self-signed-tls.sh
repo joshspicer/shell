@@ -31,5 +31,4 @@ grep '<base href="/">' /tmp/nx.out
 grep -oP "(?<=src=\")[^\"]+(?=\")" /tmp/nx.out | while IFS= read -r line ; do
   name=$(basename "$line" | cut -f 1 -d .)
   curl --fail -k -v --max-time 1 https://127.0.0.1:8443"$line" > /tmp/"$name".js.out 2> /tmp/"$name".js.err
-  cat /tmp/"$name".js.out
 done
