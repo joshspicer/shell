@@ -32,7 +32,9 @@ export function FeaturedPrompt({
         <div className="h-36">
           <h4 className="mb-2 text-base font-semibold">{name}</h4>
           <div>
-            <p className="mb-4 text-sm">{description}</p>
+            <p className="mb-4 truncate text-sm lg:overflow-visible lg:whitespace-normal">
+              {description}
+            </p>
           </div>
         </div>
         {launchButton}
