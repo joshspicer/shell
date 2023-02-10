@@ -1,7 +1,7 @@
 import { TextTitle } from '@cased/ui';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IRunbookDatabase } from '@cased/remotes';
+import { IRunbookDatabase } from '@cased/data';
 import { useStoreActions } from '@cased/redux';
 import SettingsTemplate, { TabId } from '../../../../settings-template';
 import DatabaseForm from '../database-form/database-form';

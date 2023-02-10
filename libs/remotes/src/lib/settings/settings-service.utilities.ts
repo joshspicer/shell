@@ -1,4 +1,4 @@
-import { ILog } from './i-settings';
+import { ILog } from '@cased/data';
 import { ISettingsLogSessionApiResponse } from './i-settings-api-response';
 
 export const transformLogs = (logs: ISettingsLogSessionApiResponse[]): ILog[] =>

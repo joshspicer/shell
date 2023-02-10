@@ -7,7 +7,9 @@ import {
   ISettingsUser,
   ICasedShellData,
   IGroupDetails,
-} from '@cased/remotes';
+  IUser,
+  IEntry,
+} from '@cased/data';
 import type { IStoreInjections } from '../store';
 
 export interface ISettingsStore {
@@ -21,10 +23,12 @@ export interface ISettingsStore {
   users: ISettingsUser[];
   userAccess: string;
   userLogs: ILog[];
+  userLogsAuthor: IUser;
 
   groups: ISettingsGroup[];
   groupAccess: string;
   groupLogs: ILog[];
+  groupLogDetails: IEntry;
   groupDetails: IGroupDetails;
 
   // @TODO Rename setGroup
@@ -33,13 +37,14 @@ export interface ISettingsStore {
   setGroups: Action<ISettingsStore, ISettingsGroup[]>;
   setGroupAccess: Action<ISettingsStore, string>;
   setGroupLogs: Action<ISettingsStore, ILog[]>;
+  setGroupLogDetails: Action<ISettingsStore, IEntry>;
   setGroupDetails: Action<ISettingsStore, IGroupDetails>;
 
   // @TODO Rename as setAllUsers
   setUsers: Action<ISettingsStore, ISettingsUser[]>;
   setUser: Action<ISettingsStore, { id: string; user: ISettingsUser }>;
   setUserAccess: Action<ISettingsStore, string>;
-  setUserLogs: Action<ISettingsStore, ILog[]>;
+  setUserLogs: Action<ISettingsStore, { user: IUser; logs: ILog[] }>;
   setOrganization: Action<ISettingsStore, { organization: string }>;
   setCertificateAuthentication: Thunk<
     ISettingsStore,

@@ -1,6 +1,7 @@
 import { action, thunk, Action, Thunk, computed, Computed } from 'easy-peasy';
 import jwtDecode from 'jwt-decode';
-import { IUser, TOKEN_ACCESS_ID, TOKEN_REFERSH_ID } from '@cased/remotes';
+import { TOKEN_ACCESS_ID, TOKEN_REFERSH_ID } from '@cased/remotes';
+import { IUser } from '@cased/data';
 import {
   dispatchNotification,
   NotificationType,

@@ -1,12 +1,5 @@
+import { IUser } from '@cased/data';
 import { axiosInstance } from '../axios';
-
-export interface IUser {
-  id?: string;
-  email?: string;
-  name?: string;
-  groups?: string[];
-  role?: 'admin' | 'user';
-}
 
 const get = async (id: string): Promise<IUser> => {
   const {

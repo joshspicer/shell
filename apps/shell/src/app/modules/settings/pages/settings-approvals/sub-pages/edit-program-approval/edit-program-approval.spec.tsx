@@ -1,10 +1,8 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { StoreProvider } from 'easy-peasy';
-import {
-  ApprovalType,
-  settingsApprovalsService as SettingsApprovalsServiceType,
-} from '@cased/remotes';
+import { settingsApprovalsService as SettingsApprovalsServiceType } from '@cased/remotes';
+import { ApprovalType } from '@cased/data';
 import { A } from '@cased/test-utilities';
 import { getMockStore } from '@cased/redux';
 import EditProgramApproval from './edit-program-approval';
