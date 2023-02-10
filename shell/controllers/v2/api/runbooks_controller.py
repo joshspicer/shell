@@ -57,16 +57,16 @@ class RESTProcessor:
         body, headers = self.prepare_body_and_headers()
         url = provider.base_url + data["api_path"]
 
-        if provider.authentication_type == "basic_auth":
+        if provider.authentication_type == "basic":
             return requests.request(
                 data["http_method"],
                 url,
                 json=body,
                 headers=headers,
-                auth=(provider.data["username"], provider.pw()),
+                auth=(provider.data["username"], provider.get_provider_pw()),
             )
-        elif provider.authentication_type == "authorization_token":
-            headers["Authorization"] = "Bearer {}".format(provider.pw())
+        elif provider.authentication_type == "auth":
+            headers["Authorization"] = "Bearer {}".format(provider.get_provider_pw())
             return requests.request(
                 data["http_method"],
                 url,
