@@ -33,7 +33,7 @@ class APIProviderController(BaseMixin, tornado.web.RequestHandler):
     def get(self, id):
         try:
             ap = APIProvider.find_or_fail(id)
-            pw = ap.pw()
+            pw = ap.get_provider_pw()
         except Exception as e:
             raise tornado.web.HTTPError(404, str(e))
 
@@ -77,20 +77,22 @@ class APIProviderController(BaseMixin, tornado.web.RequestHandler):
                     ap_data.update(
                         username=params["username"],
                     )
-                    if ap_data.get("auth_token", None):
-                        ap_data.pop("auth_token")
+                if ap_data.get("auth_token", None):
+                    ap_data.pop("auth_token")
+                    ap.delete_pw()
 
                 if password or password == "":
-                    ap.store_pw(password)
+                    ap.store_pw(password, name="basic")
 
             elif params.get("authentication_type", ap.authentication_type) == "token":
                 if params.get("auth_token", None):
                     ap_data.update(auth_token=params["auth_token"])
-                    if ap_data.get("username", None):
-                        ap_data.pop("username")
+                if ap_data.get("username", None):
+                    ap_data.pop("username")
+                    ap.delete_pw()
 
                 if secret_token or secret_token == "":
-                    ap.store_pw(secret_token)
+                    ap.store_pw(secret_token, name="token")
 
             ap.update(
                 api_name=params.get("api_name", ap.api_name),
@@ -101,7 +103,7 @@ class APIProviderController(BaseMixin, tornado.web.RequestHandler):
                 data=ap_data,
             )
 
-            pw = ap.pw()
+            pw = ap.get_provider_pw()
 
             self.write({"api_provider": ap, "pw": bool(pw)})
             return
@@ -155,13 +157,13 @@ class APIProvidersController(BaseMixin, tornado.web.RequestHandler):
             secret_token = params.get("secret_token", None)
 
             if (password or password == "") and authentication_type == "basic":
-                api_provider.store_pw(password)
+                api_provider.store_pw(password, name="basic")
             elif (
                 secret_token or secret_token == ""
             ) and authentication_type == "token":
-                api_provider.store_pw(secret_token)
+                api_provider.store_pw(secret_token, name="token")
 
-            pw = api_provider.pw()
+            pw = api_provider.get_provider_pw()
 
             self.set_status(201)
             self.write({"api_provider": api_provider, "pw": bool(pw)})

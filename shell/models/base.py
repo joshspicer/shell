@@ -35,24 +35,31 @@ class BaseMixin(AllFeaturesMixin, SerializeMixin):
     def vault_path(self):
         return "{}/{}".format(self.__class__.__tablename__, self.id)
 
-    def store_pw(self, password):
+    def store_pw(self, password, **kwargs):
+        name = kwargs.get("name", "password")
+        data = dict()
+        data[name] = password
         self.__class__.vault.secrets.kv.v2.create_or_update_secret(
             path=self.vault_path(),
-            secret=dict(password=password),
+            secret=data,
         )
 
-    def pw(self):
+    def pw(self, **kwargs):
+        name = kwargs.get("name", "password")
         try:
             pw = self.__class__.vault.secrets.kv.v2.read_secret_version(
                 path=self.vault_path(),
-            )["data"]["data"]["password"]
+            )["data"]["data"][name]
         except hvac.exceptions.InvalidPath:
+            pw = None
+
+        except Exception as e:
             pw = None
 
         return pw
 
-    def delete_pw(self):
-        if self.pw():
+    def delete_pw(self, **kwargs):
+        if self.pw(**kwargs):
             self.__class__.vault.secrets.kv.v2.delete_metadata_and_all_versions(
                 path=self.vault_path(),
             )
