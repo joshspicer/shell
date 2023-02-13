@@ -1,4 +1,18 @@
 #!/bin/bash
+set -e
+
+. $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../common.sh
 
 docker buildx install
-docker build -t test -f .devcontainer/Dockerfile --progress=plain . 
+
+: ${REGISTRY:=localhost:5000}
+export REGISTRY
+export DOCKER_BUILDKIT=1
+export BUILDKIT_PROGRESS=plain
+
+echo "Building..."
+timeout 300 docker compose \
+  -f .devcontainer/docker-compose.build.yml \
+  build \
+  --build-arg GIT_SHA=$(git rev-parse --short HEAD) \
+  --build-arg BUILDKIT_INLINE_CACHE=1

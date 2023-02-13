@@ -8,3 +8,4 @@ shell/static/js/bundle.js
 shell/static/css/style.css
 .git
 .github
+__pycache__

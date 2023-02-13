@@ -11,10 +11,7 @@ exec 2>&1
 # Remove any previous markers of completion.
 rm -f log/.postAttachCommand.log
 
-if [ -n "$CODESPACE_NAME" ]; then
-  # Cleanup Docker images we're not using.
-  docker images -q | xargs docker rmi --no-prune -f || true
-fi
+( timeout 600 .devcontainer/script/build ) || true
 
 # Remove default first run notice
 if [ -f /workspaces/.codespaces/shared/first-run-notice.txt ]; then

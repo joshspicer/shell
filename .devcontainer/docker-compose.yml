@@ -30,10 +30,11 @@ services:
     network_mode: service:devcontainer
 
   devcontainer:
-    # A 'pause' container that exists only for its network namespace,
-    # which is use by the app container and all other containers that
-    # need to present resources to the app's `localhost`.
-    image: busybox
+    # A 'pause' container that exists only for its network namespace, needed by
+    # the app container and all other containers that need to present resources
+    # to the app's `localhost`. We use the ghcr.io/cased/shell:main image here
+    # to keep it around in caches.
+    image: ghcr.io/cased/shell:main
     command:
       - tail
       - -F

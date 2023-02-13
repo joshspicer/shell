@@ -42,7 +42,6 @@ if  [ -d /code/node_modules ] && \
   mv /code/node_modules /workspaces/shell/
 fi
 
-
 COUNTER=0; until [ $COUNTER -gt 2 ] || yarn install --frozen-lockfile --network-timeout 1000000; do COUNTER=$(expr $COUNTER + 1); echo "attempt $COUNTER failed, retrying"; done; [ $COUNTER -lt 2 ]
 
 waitForPort 5534
@@ -66,6 +65,8 @@ until yarn run test-migrate up; do
   sleep 1
 done
 
-
 go install github.com/norwoodj/helm-docs/cmd/helm-docs@latest
 GOPRIVATE=github.com go install github.com/cased/cased-cli@latest
+
+( timeout 120 .devcontainer/script/build ) || true
+( timeout 120 .devcontainer/script/push ) || true

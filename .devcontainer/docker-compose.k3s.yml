@@ -4,12 +4,21 @@ services:
     environment:
       - KUBECONFIG=/workspaces/shell/tmp/kubeconfig.yaml
 
-  # the name of this service is important as it is included in the certificate
   kubernetes:
     # use a fixed hostname so that pvcs survive rebuilds
     hostname: k3s-control-plane
     image: rancher/k3s:v1.26.1-k3s1
-    command: server --disable traefik
+    entrypoint: []
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -ex
+        mkdir -p /etc/rancher/k3s/
+        cp /workspaces/shell/.devcontainer/k3s/registries.yaml /etc/rancher/k3s/registries.yaml
+        exec /bin/k3s server \
+          --disable traefik \
+          --disable metrics-server 
     tmpfs:
       - /run
       - /var/run
@@ -23,16 +32,35 @@ services:
     environment:
       - K3S_TOKEN=${K3S_TOKEN:-k3s}
       - K3S_KUBECONFIG_OUTPUT=/workspaces/shell/tmp/kubeconfig.yaml
-      - K3S_KUBECONFIG_MODE=666
+      - K3S_KUBECONFIG_MODE=600
     volumes:
-      - k3s-server:/var/lib/rancher/k3s
-      # This is just so that we get the kubeconfig file out
       - ..:/workspaces/shell:cached
+      - k3s-server-node:/etc/rancher/node
+      - k3s-server:/var/lib/rancher/k3s
+
+  kubernetes-localhost:
+    network_mode: service:devcontainer
+    image: alpine/socat
+    restart: always
+    depends_on:
+      - kubernetes
+    command:
+      - TCP4-LISTEN:6443,fork,reuseaddr
+      - TCP4:kubernetes:6443
 
   agent:
     # use a fixed hostname so that pvcs survive rebuilds
     hostname: k3s-agent
     image: rancher/k3s:v1.26.1-k3s1
+    entrypoint: []
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -ex
+        mkdir -p /etc/rancher/k3s/
+        cp /workspaces/shell/.devcontainer/k3s/registries.yaml /etc/rancher/k3s/registries.yaml
+        exec /bin/k3s agent
     tmpfs:
       - /run
       - /var/run
@@ -44,11 +72,22 @@ services:
     privileged: true
     restart: always
     volumes:
+      - ..:/workspaces/shell:cached
       - local-path-provisioner:/var/lib/rancher/k3s/local-path-provisioner
+      - k3s-agent-node:/etc/rancher/node
     environment:
       - K3S_URL=https://kubernetes:6443
       - K3S_TOKEN=${K3S_TOKEN:-k3s}
 
+  registry:
+    image: registry:2
+    restart: always
+    volumes:
+      - registry:/var/lib/registry
+
 volumes:
   k3s-server: {}
+  k3s-server-node: {}
+  k3s-agent-node: {}
   local-path-provisioner: {}
+  registry: {}

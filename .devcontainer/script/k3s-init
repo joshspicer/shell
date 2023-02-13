@@ -2,11 +2,6 @@
 set -e
 
 if [ -f tmp/kubeconfig.yaml ]; then
-  # Fixup kubeconfig
-  cat tmp/kubeconfig.yaml | sed 's/127.0.0.1/kubernetes/g' > tmp/kubeconfig$$.yaml
-  mv tmp/kubeconfig$$.yaml tmp/kubeconfig.yaml
-  chmod 600 tmp/kubeconfig.yaml
-
   kubectl apply -f .devcontainer/k8s/local-path-storage.yml > /dev/null || true
   until helm upgrade \
     --install \

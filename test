@@ -21,9 +21,10 @@ if [ "${IN_CONTAINER}" != "true" ]; then
     docker buildx install
 
     docker buildx build \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
         --build-arg=GIT_SHA=$(git rev-parse --short HEAD) \
-        --cache-from=ghcr.io/cased/shell:main \
-        --cache-from=ghcr.io/cased/shell-cache:main \
+        --cache-from=type=registry,ref=ghcr.io/cased/shell:main \
+        --cache-from=type=registry,ref=ghcr.io/cased/shell-cache:main \
         --pull \
         -f Dockerfile \
         --load \
