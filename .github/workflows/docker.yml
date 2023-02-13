@@ -48,21 +48,19 @@ jobs:
             context: ./
             dockerfile: Dockerfile
             vuln-type: os,library
-            # Skip linux/arm64/v8 for now as it takes 1h+ and is not required for M1/M2 Mac OS VS Code usage
-            # Also https://support.github.com/ticket/personal/0/1858013 causes regular failures
             platforms: linux/amd64
           - name: sshd-demo
             context: .devcontainer/sshd
             dockerfile: .devcontainer/sshd/Dockerfile
             vuln-type: os,library
-            platforms: linux/amd64,linux/arm64/v8
+            platforms: linux/amd64
           - name: shell-devcontainer
             context: ./
             dockerfile: .devcontainer/Dockerfile
             # TODO
             # vuln-type: os,library
             vuln-type: os
-            platforms: linux/amd64,linux/arm64/v8
+            platforms: linux/amd64
             args: |
               NODE_VERSION=lts/*
 
