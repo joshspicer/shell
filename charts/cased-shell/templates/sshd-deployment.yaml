@@ -34,7 +34,7 @@ spec:
           - name: CASED_SHELL_ENDPOINT
             value: {{ .Values.service.protocol }}://{{ include "shell.fullname" . }}-{{ .Values.service.protocol }}:{{ .Values.service.port }}
           - name: PING_PATH
-            value: '/v2/_ping'
+            value: '/_ping'
           image: {{ .Values.sshd.image }}
           imagePullPolicy: Always
           name: sshd

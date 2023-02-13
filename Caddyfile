@@ -20,6 +20,12 @@
 	    respond "ok {$GIT_SHA}" 200
     }
 
+    handle /_ping {
+        reverse_proxy localhost:8888 {
+          trusted_proxies private_ranges
+        }
+    }
+
     handle /api* {
         reverse_proxy localhost:8888 {
           trusted_proxies private_ranges
@@ -56,6 +62,12 @@
 
     handle /_health {
 	    respond "ok {$GIT_SHA}" 200
+    }
+
+    handle /_ping {
+        reverse_proxy localhost:8888 {
+          trusted_proxies private_ranges
+        }
     }
 
     handle /api* {

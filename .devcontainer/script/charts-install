@@ -32,7 +32,7 @@ set +o allexport
 echo "--set=podAnnotations.installed-by=chart-install" > .env.helm-args.${name}
 
 # Configure ingress for Codespaces
-fqdn="$(docker run -i --rm mikefarah/yq '.ingress.fqdn' < ${1})"
+fqdn="$(docker run -i --rm mikefarah/yq:4 '.ingress.fqdn' < ${1})"
 if [ "$fqdn" != "null" ]; then
   echo "fqdn detected in values.yaml"
 else
@@ -110,12 +110,16 @@ fi
 # Use latest image from the PR if available. Requires changes to Docker image
 # and PR to be pushed separately. Improvements to this workflow are welcome.
 if gh pr view > /dev/null && gh pr view | grep ^labels: | grep -q docker:pr-image; then
+  # Validate Cadddyfile
+  # TODO: move to bats unit tests
+  CADDY_LOG_LEVEL=debug CADDY_HTTP_PORT=80 CADDY_HOSTNAME_WITHOUT_PORT=localhost CADDY_TLS_PORT=8443 caddy validate Caddyfile
   pr_number=$(gh pr view | grep ^number: | awk '{print $2}')
   pr_url=$(gh pr view | grep ^url: | awk '{print $2}')
   if [ -n "$pr_number" ]; then
     echo "Using image from ${pr_url} since it has label 'docker:pr-image'"
     echo "--set=config.image=ghcr.io/cased/shell:pr-${pr_number}" >> .env.helm-args.${name}
     echo "--set=sshd.image=ghcr.io/cased/sshd-demo:pr-${pr_number}" >> .env.helm-args.${name}
+    echo "--set=podAnnotations.restart-me=please-${RANDOM}" >> .env.helm-args.${name}
   fi
 fi
 

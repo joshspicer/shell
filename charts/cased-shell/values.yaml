@@ -69,7 +69,7 @@ config:
   log_level: 'info'
 
   # -- Image to use for Cased Shell.
-  image: 'ghcr.io/cased/shell:pr-633'
+  image: 'ghcr.io/cased/shell:main'
   # -- Jump configuration YAML - describe your prompts here. See
   # https://github.com/cased/jump.
   jump: ''
@@ -170,7 +170,7 @@ sshd:
   # included, and `/etc/profile.d/k8s.sh` configures it for in-cluster access.
   # To include your own utilities or configure access to your own cluster, you
   # may use this image as a base image and refer to your customized image here.
-  image: 'ghcr.io/cased/sshd-demo:pr-633'
+  image: 'ghcr.io/cased/sshd-demo:main'
   # -- Resource requests and limits for the SSHD container.
   resources: {}
 

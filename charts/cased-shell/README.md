@@ -52,7 +52,7 @@ ingress:
     alb.ingress.kubernetes.io/backend-protocol: HTTPS
     alb.ingress.kubernetes.io/target-type: 'ip'
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/healthcheck-path: /v2/_ping
+    alb.ingress.kubernetes.io/healthcheck-path: /_ping
 
     # ALB idle timeout is 60 seconds by default.
     # You may want to increase this to allow for SSH sessions to be idle for longer.
@@ -115,7 +115,7 @@ ingress:
 | <a href="./values.yaml#L117">aws.s3.bucket</a> | AWS S3 bucket name to use for object storage. Only used if `objectStorageBackend` is "s3". | `nil` | string |
 | <a href="./values.yaml#L119">aws.s3.endpoint</a> | AWS S3 API endpoint to use, defaults to upstream S3. Only used if `objectStorageBackend` is "s3". | `nil` | string |
 | <a href="./values.yaml#L121">aws.s3.signatureVersion</a> | Allows configuring the AWS S3 API signatureVersion if necessary when using a custom implementation. Only used if `objectStorageBackend` is "s3". | `nil` | string |
-| <a href="./values.yaml#L72">config.image</a> | Image to use for Cased Shell. | `"ghcr.io/cased/shell:pr-633"` | string |
+| <a href="./values.yaml#L72">config.image</a> | Image to use for Cased Shell. | `"ghcr.io/cased/shell:main"` | string |
 | <a href="./values.yaml#L75">config.jump</a> | Jump configuration YAML - describe your prompts here. See https://github.com/cased/jump. | `""` | string |
 | <a href="./values.yaml#L85">config.jumpResources</a> | Resource requests and limits for the Jump container. | `{}` | object |
 | <a href="./values.yaml#L44">config.key</a> | A value to use as the key to sign JWT tokens used in cookies. | `"insecure"` | string |
@@ -154,7 +154,7 @@ ingress:
 | <a href="./values.yaml#L134">service.protocol</a> | Protocol to use for the service. Change to http to use port 8888 above. | `"https"` | string |
 | <a href="./values.yaml#L130">service.type</a> | Type of service to create. | `"ClusterIP"` | string |
 | <a href="./values.yaml#L166">sshd.enabled</a> | Set to false to skip the creation of a SSHD service. | `true` | bool |
-| <a href="./values.yaml#L173">sshd.image</a> | Image to use for the included endpoint. This image runs an OpenSSH server and contains an `app` user configured to automatically allow connections that include a valid certificate singed by your Cased Shell CA. `kubectl` is included, and `/etc/profile.d/k8s.sh` configures it for in-cluster access. To include your own utilities or configure access to your own cluster, you may use this image as a base image and refer to your customized image here. | `"ghcr.io/cased/sshd-demo:pr-633"` | string |
+| <a href="./values.yaml#L173">sshd.image</a> | Image to use for the included endpoint. This image runs an OpenSSH server and contains an `app` user configured to automatically allow connections that include a valid certificate singed by your Cased Shell CA. `kubectl` is included, and `/etc/profile.d/k8s.sh` configures it for in-cluster access. To include your own utilities or configure access to your own cluster, you may use this image as a base image and refer to your customized image here. | `"ghcr.io/cased/sshd-demo:main"` | string |
 | <a href="./values.yaml#L175">sshd.resources</a> | Resource requests and limits for the SSHD container. | `{}` | object |
 | <a href="./values.yaml#L194">sshd.role.rules</a> | The rules to apply to the role created for the SSHD service account. This role is only created if `rbac.create` is enabled. | `[{"apiGroups":[""],"resources":["pods"],"verbs":["get","list"]}]` | list |
 | <a href="./values.yaml#L189">sshd.serviceAccount.annotations</a> | Annotations to add to the service account if one is created. Can be used to associate the created service account with an existing [AWS IAM role](https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html) or [GCP Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity). | `{}` | object |

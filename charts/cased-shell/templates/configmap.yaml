@@ -8,6 +8,5 @@ data:
     CASED_SHELL_HOSTNAME: '{{ .Values.ingress.fqdn }}'
     CASED_SHELL_PLUGINS: '{{ .Values.config.CASED_SHELL_PLUGINS }}'
     CASED_SHELL_LOG_LEVEL: '{{ .Values.config.log_level | default `info` }}'
-    CADDY_LOG_LEVEL: ERROR
     CASED_SHELL_TLS: internal
     ALLOWED_ORIGINS: 'https://{{ .Values.ingress.fqdn }}'

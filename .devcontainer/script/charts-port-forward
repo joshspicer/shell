@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -o pipefail
+set -e -o pipefail -x
 
 PORT=8443
 
@@ -30,4 +30,4 @@ echo "https://${CODESPACE_NAME}-${PORT}.${GITHUB_CODESPACES_PORT_FORWARDING_DOMA
 echo
 
 # Tail logs
-exec kubectl logs --tail=0 -f deploy/shell-dev-cased-shell-v3
+until kubectl logs --tail=0 -f deploy/shell-dev-cased-shell-v3; do sleep 1; done

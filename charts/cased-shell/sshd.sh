@@ -12,32 +12,32 @@ until curl -s --max-time 3 -k "${CASED_SHELL_ENDPOINT}${PING_PATH}"; do
 done
 echo "ready!"
 
+prefix=/v2/
+
 until [ -s /home/app/.ssh/authorized_keys ]; do
-  for prefix in "/" "/v2/"; do
-    printf "Importing CA config from %s ... " \
-      "${CASED_SHELL_ENDPOINT}${prefix}"
-    if curl -s --fail -k "${CASED_SHELL_ENDPOINT}${prefix}principal.txt" > /dev/null; then
-      line="$(curl -s --fail -k "${CASED_SHELL_ENDPOINT}${prefix}.ssh/authorized_keys" || true)"
-      if [ -z "$line" ]; then
-        echo " none found"
-        sleep 3
-        continue
-      fi
-      echo ok
-      keys=/home/app/.ssh/authorized_keys
-      if grep "$line" $keys; then
-        echo "Key already exists in $keys"
-        break
-      else
-        echo "Added $line to $keys"
-        echo "$line" >> $keys
-        break
-      fi
-    else
+  printf "Importing CA config from %s ... " \
+    "${CASED_SHELL_ENDPOINT}${prefix}"
+  if curl -s --fail -k "${CASED_SHELL_ENDPOINT}${prefix}principal.txt" > /dev/null; then
+    line="$(curl -s --fail -k "${CASED_SHELL_ENDPOINT}${prefix}.ssh/authorized_keys" || true)"
+    if [ -z "$line" ]; then
       echo " none found"
       sleep 3
+      continue
     fi
-  done
+    echo ok
+    keys=/home/app/.ssh/authorized_keys
+    if grep "$line" $keys; then
+      echo "Key already exists in $keys"
+      break
+    else
+      echo "Added $line to $keys"
+      echo "$line" >> $keys
+      break
+    fi
+  else
+    echo " none found"
+    sleep 3
+  fi
 done
 
 chown -R app /home/app

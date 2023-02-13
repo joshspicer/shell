@@ -6,8 +6,9 @@ if (process.env.NX_CODESPACE_NAME) {
 } else if (process.env.NODE_ENV === 'test') {
   baseURL = `http://testing.testing.testing`;
 } else {
-  baseURL = '/';
+  baseURL = window.location.origin;
 }
+
 export const axiosInstance = axios.create({
   baseURL,
 });

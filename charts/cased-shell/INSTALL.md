@@ -38,7 +38,7 @@ ingress:
     alb.ingress.kubernetes.io/backend-protocol: HTTPS
     alb.ingress.kubernetes.io/target-type: 'ip'
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/healthcheck-path: /v2/_ping
+    alb.ingress.kubernetes.io/healthcheck-path: /_ping
 
     # ALB idle timeout is 60 seconds by default.
     # You may want to increase this to allow for SSH sessions to be idle for longer.

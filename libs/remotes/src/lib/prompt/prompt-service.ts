@@ -74,6 +74,19 @@ export const promptService = {
       throw new PromptAccessError(slug);
     } else if (response.status !== 200) {
       throw new Error(`Something went wrong: ${response.status}`);
+    } else if (!shellInfo.session_id || !shellInfo.id) {
+      console.error(
+        'Response is empty when establishing websocket connection. Aborting connection. Connection info',
+        slug,
+        approvalStatus,
+        data,
+        formData,
+        response,
+      );
+
+      throw new Error(
+        'Shell connection failed. Data missing. See logs for details',
+      );
     }
 
     const url = new URL(

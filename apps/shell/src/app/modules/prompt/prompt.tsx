@@ -53,6 +53,7 @@ export default function Prompt({ slug }: IProps) {
       approvalStatus,
       ...promptForm,
     }).catch((error: Error) => {
+      console.error('connect error', error);
       if (error instanceof PromptAccessError) {
         term.write(ansi(`You don't have access to ${slug}\n\r`, 'red'));
       } else {

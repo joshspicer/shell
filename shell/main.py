@@ -78,6 +78,7 @@ def make_handlers(loop, options):
     policy = get_policy_setting(options, host_keys_settings)
 
     handlers = [
+        (r"/_ping", V2PingController, dict(loop=loop)),
         (r"/v2/_ping", V2PingController, dict(loop=loop)),
         (
             r"/v2/logout",

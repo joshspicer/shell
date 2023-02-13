@@ -90,7 +90,7 @@ spec:
             protocol: TCP
           readinessProbe:
             httpGet:
-              path: /v2/_ping
+              path: /_ping
               port: 8443
               scheme: "HTTPS"
             initialDelaySeconds: 10

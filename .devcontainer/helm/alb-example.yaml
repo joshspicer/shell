@@ -8,7 +8,7 @@ ingress:
     alb.ingress.kubernetes.io/backend-protocol: HTTPS
     alb.ingress.kubernetes.io/target-type: 'ip'
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/healthcheck-path: /v2/_ping
+    alb.ingress.kubernetes.io/healthcheck-path: /_ping
     alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=600
 
     # optional, can be used if certificate autodetection doesn't work or doesn't detect the right cert
@@ -20,9 +20,9 @@ ingress:
 config:
   secret: shell_2HrJ0WEulQgGma78oXLrLaNib2l
   log_level: debug
-  image: ghcr.io/cased/shell:pr-633
+  image: ghcr.io/cased/shell:main
 
 sshd:
-  image: ghcr.io/cased/sshd-demo:pr-633
+  image: ghcr.io/cased/sshd-demo:main
 
 # use the defaults for everything else

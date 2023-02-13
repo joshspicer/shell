@@ -132,8 +132,11 @@ export const promptStore: IPromptStore = {
             ...rest,
           },
         ));
+
         actions.setPromptSessionId(promptSessionId);
       } catch (error) {
+        console.error('getWebSocketUrl error', error);
+
         // istanbul ignore next
         if (isCanceled()) return;
 

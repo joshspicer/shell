@@ -4,6 +4,9 @@
 # config:
 #   image: "ghcr.io/cased/shell:pr-454"
 
+config:
+  log_level: debug
+
 server:
   # Can be set to test PRs of cased/cased-server
   # image: ghcr.io/cased/cased-server:pr-8
