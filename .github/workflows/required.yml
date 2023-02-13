@@ -16,7 +16,10 @@ on:
 
 jobs:
   success:
-    if: github.event.workflow_run.event == 'pull_request'
+    if: |
+      github.event.workflow_run.event == 'pull_request' ||
+      github.event.workflow_run.event == 'push' ||
+      github.event.workflow_run.event == 'merge_group'
     name: Create appropriate status
     runs-on: ubuntu-latest
     steps:
