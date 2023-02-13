@@ -67,7 +67,7 @@
     "convert-css-color-name-to-hex": "^0.1.1",
     "core-js": "^3.6.5",
     "daisyui": "^2.31.0",
-    "easy-peasy": "^5.1.0",
+    "easy-peasy": "^5.2.0",
     "file-saver": "^2.0.5",
     "highlight.js": "^11.6.0",
     "husky": "8",
