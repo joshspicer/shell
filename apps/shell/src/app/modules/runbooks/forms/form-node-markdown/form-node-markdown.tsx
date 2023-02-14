@@ -84,6 +84,7 @@ export function FormNodeMarkdown({
           label="Markdown"
           value={form.text}
           onChange={updateForm}
+          rows={8}
         />
       </div>
 

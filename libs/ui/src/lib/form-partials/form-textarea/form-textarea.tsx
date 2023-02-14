@@ -6,6 +6,7 @@ export interface FormTextareaProps {
   name: string;
   value?: string;
   label: string;
+  rows?: number;
   onChange: (name: string, value: string) => void;
 }
 
@@ -14,6 +15,7 @@ export function FormTextarea({
   name,
   value,
   label,
+  rows = 2,
   onChange,
 }: FormTextareaProps) {
   const onInputChange = useCallback(
@@ -28,6 +30,7 @@ export function FormTextarea({
       <span className="label label-text">{label}</span>
       <textarea
         className="textarea textarea-bordered block w-full"
+        rows={rows}
         name={name}
         value={value}
         required={required}
