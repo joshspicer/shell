@@ -1,4 +1,4 @@
-import { TextTitle } from '@cased/ui';
+import { TextBlock, TextTitle } from '@cased/ui';
 import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStoreState, useStoreActions } from '@cased/redux';
@@ -53,9 +53,10 @@ export function UserLogs() {
           <strong data-testid="user-logs__name">{user.name}</strong>{' '}
           <span data-testid="user-logs__email">({user.email})</span>
         </TextTitle>
-
         {printLogs}
-
+        {printLogs.length === 0 && (
+          <TextBlock className="l-0 text-left">No logs found</TextBlock>
+        )}
         <span data-testid="user-logs" />
       </SettingsTemplate>
     </ReadyGuard>

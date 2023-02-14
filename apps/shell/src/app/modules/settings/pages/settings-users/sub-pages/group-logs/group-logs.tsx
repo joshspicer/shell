@@ -1,4 +1,4 @@
-import { TextTitle } from '@cased/ui';
+import { TextBlock, TextTitle } from '@cased/ui';
 import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStoreActions, useStoreState } from '@cased/redux';
@@ -54,7 +54,9 @@ export function GroupLogs() {
         </TextTitle>
 
         {printLogs}
-
+        {printLogs.length === 0 && (
+          <TextBlock className="l-0 text-left">No logs found</TextBlock>
+        )}
         <span data-testid="group-logs" />
       </SettingsTemplate>
     </ReadyGuard>
