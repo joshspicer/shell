@@ -155,11 +155,11 @@ def get_ssl_context(options):
 
 def get_trusted_downstream(tdstream):
     result = set()
-    for ip in tdstream.split(","):
-        ip = ip.strip()
-        if ip:
-            to_ip_address(ip)
-            result.add(ip)
+    for ip_addr in tdstream.split(","):
+        ip_addr = ip_addr.strip()
+        if ip_addr:
+            to_ip_address(ip_addr)
+            result.add(ip_addr)
     return result
 
 
