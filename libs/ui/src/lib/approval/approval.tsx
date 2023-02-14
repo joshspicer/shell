@@ -28,7 +28,7 @@ export function Approval({
   status,
   hideActions,
   border,
-  createdAt,
+  createdAt = new Date(),
 }: ApprovalProps) {
   return (
     <div

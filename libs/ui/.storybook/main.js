@@ -1,4 +1,4 @@
-const rootMain = require('../../../.storybook/main');
+const rootMain = require('../../../.storybook/main.root');
 
 module.exports = {
   ...rootMain,

@@ -1,8 +1,3 @@
-const webpack = require('webpack');
-// eslint-disable-next-line import/no-extraneous-dependencies
-const { merge } = require('webpack-merge');
-const nrwlConfig = require('@nrwl/react/plugins/webpack.js');
-
 /**
  * Webpack 5 blew out images with a change. Temporary fix until they patch it
  * https://github.com/nrwl/nx/issues/14378#issuecomment-1417523527
@@ -26,24 +21,15 @@ const withSvgFix = (config) => {
   });
 };
 
-module.exports = (config) => {
-  nrwlConfig(config);
+module.exports = {
+  stories: [],
+  addons: ['@storybook/addon-essentials'],
+  // uncomment the property below if you want to apply some webpack config globally
+  webpackFinal: async (config, { configType }) => {
+    // Make whatever fine-grained changes you need that should apply to all storybook configs
+    withSvgFix(config);
 
-  const websocketUrl = `wss://${process.env.NX_CODESPACE_NAME}-4200.${process.env.NX_GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/ws`;
-  withSvgFix(config);
-
-  return merge(config, {
-    plugins: [
-      new webpack.EnvironmentPlugin({
-        NX_CODESPACE_NAME: null,
-        NX_GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN: null,
-      }),
-    ],
-    devServer: {
-      allowedHosts: 'all',
-      client: {
-        webSocketURL: websocketUrl,
-      },
-    },
-  });
+    // Return the altered config
+    return config;
+  },
 };
