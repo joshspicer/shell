@@ -1003,7 +1003,7 @@ class BaseMixin(object):
 
         username = data.get("username", "")
         if username is None:
-            raise "Username is missing"
+            raise InvalidValueError("Username is missing")
         password = data.get("password", "")
         totp = data.get("topt", "")
 
