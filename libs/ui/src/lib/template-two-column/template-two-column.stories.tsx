@@ -18,7 +18,6 @@ const Template: ComponentStory<typeof TemplateTwoColumn> = (args) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  title: 'Cased',
   userName: 'John Doe',
   userLinks: headerLinksExample,
   navLinks: sampleNav,

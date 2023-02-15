@@ -5,8 +5,6 @@ import { useStoreState } from '@cased/redux';
 import { navigation } from './navigation';
 import { userNavigation } from './user-navigation';
 
-import logo from './shell-logo.svg';
-
 export interface PageTwoColumnProps {
   children: React.ReactNode;
   testId?: string;
@@ -27,9 +25,7 @@ export function PageTwoColumn({ children, testId }: PageTwoColumnProps) {
 
   return (
     <TemplateTwoColumn
-      title="Cased"
       userName={userName}
-      logo={<img alt="logo" src={logo} width="24" />}
       userLinks={userNavigation}
       navLinks={navigation}
       activeLinkId={activeLinkId}

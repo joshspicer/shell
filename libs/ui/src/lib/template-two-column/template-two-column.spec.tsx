@@ -6,13 +6,7 @@ import TemplateTwoColumn from './template-two-column';
 describe('TemplateTwoColumn', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
-      <TemplateTwoColumn
-        title=""
-        logo={<div />}
-        userName=""
-        userLinks={[]}
-        navLinks={[]}
-      >
+      <TemplateTwoColumn userName="" userLinks={[]} navLinks={[]}>
         <p>test</p>
       </TemplateTwoColumn>,
       { wrapper: BrowserRouter },

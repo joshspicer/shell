@@ -6,7 +6,7 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { INodeActionData, RunbookMode, Panel } from '@cased/data';
-import { Button } from '@cased/ui';
+import { Button, Logo } from '@cased/ui';
 import { useStoreState, useStoreActions } from '@cased/redux';
 import ActionNode from './action-node/action-node';
 import EdgeAdd from './edge-add/edge-add';
@@ -202,6 +202,7 @@ export function Runbooks() {
   return (
     <div data-testid="runbooks" className="app-runbooks fixed h-full w-full">
       <div className="border-fg-muted flex h-14 items-center justify-between border-b bg-white px-6">
+        <Logo withText={false} />
         <h1 className="self-centered font-semibold">{state.name}</h1>
         {mode === RunbookMode.View ? (
           <Link to={`/runbooks/${params.id}`} className="text-blue-500">

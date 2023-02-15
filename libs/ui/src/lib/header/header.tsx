@@ -1,22 +1,15 @@
-import { ReactElement, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ILink } from '@cased/data';
+import Logo from '../logo/logo';
 
 export interface HeaderProps {
-  title: string;
-  logo: ReactElement;
   userName: string;
   userLinks: ILink[];
   className?: string;
 }
 
-export function Header({
-  title,
-  userName,
-  userLinks,
-  className,
-  logo,
-}: HeaderProps) {
+export function Header({ userName, userLinks, className }: HeaderProps) {
   const cx = useMemo(
     () =>
       `header w-full bg-white top-0 p-4 flex justify-between items-center border-b border-zinc-200 ${className}`,
@@ -43,12 +36,7 @@ export function Header({
 
   return (
     <div className={cx}>
-      <Link to="/">
-        <div className="flex items-center space-x-2">
-          <div>{logo}</div>
-          <div className="font-medium text-gray-900">{title}</div>
-        </div>
-      </Link>
+      <Logo />
 
       <div className="dropdown dropdown-bottom dropdown-end">
         <button className="cursor-pointer">{userName}</button>

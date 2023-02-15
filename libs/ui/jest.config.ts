@@ -7,7 +7,7 @@ export default {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nrwl/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coveragePathIgnorePatterns: ['/libs/utilities'],
+  coveragePathIgnorePatterns: ['/libs/utilities', '.svg'],
   coverageDirectory: '../../coverage/libs/ui',
   coverageThreshold: {
     '*/**': {

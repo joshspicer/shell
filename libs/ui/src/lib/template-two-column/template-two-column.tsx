@@ -1,12 +1,9 @@
 import { ILink } from '@cased/data';
-import { ReactElement } from 'react';
 import Header from '../header/header';
 import Sidebar, { INavLink } from '../sidebar/sidebar';
 import './template-two-column.scss';
 
 export interface TemplateTwoColumnProps {
-  title: string;
-  logo: ReactElement;
   userName: string;
   userLinks: ILink[];
   navLinks: INavLink[];
@@ -16,8 +13,6 @@ export interface TemplateTwoColumnProps {
 }
 
 export function TemplateTwoColumn({
-  title,
-  logo,
   userName,
   userLinks,
   navLinks,
@@ -29,8 +24,6 @@ export function TemplateTwoColumn({
     <div data-testid={testId} className="template-two-column min-h-full">
       <Header
         className="sticky z-10"
-        title={title}
-        logo={logo}
         userName={userName}
         userLinks={userLinks}
       />
