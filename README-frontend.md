@@ -97,6 +97,14 @@ npm run lint:css
 npx nx run test --project=ui --codeCoverage
 ```
 
+### NX Upgrade Migrations
+
+Don't manually upgrade NX packages or use dependabot to upgrade anything outside a patch. Instead use the [NX migration CLI](https://nx.dev/packages/nx/documents/migrate). This is an evolving tool, so be sure to check the command's documentation for best practices.
+
+```bash
+npx nx migrate latest --interactive
+```
+
 ### API structure
 
 When working with the Python APIs you can upgrade them to return camelcase instead of underscores. For example converting `my_var` into `myVar` automatically. To do so just swap `self.write` with `self.write_api` in the Python files.
