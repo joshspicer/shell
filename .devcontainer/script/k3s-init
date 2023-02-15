@@ -17,6 +17,9 @@ if [ -f tmp/kubeconfig.yaml ]; then
     --set controller.config.ssl-protocols='TLSv1 TLSv1.1 TLSv1.2 TLSv1.3' \
     --set controller.config.ssl-early-data=false \
     > /dev/null; do
+    if [ $SECONDS -gt 60 ]; then
+      exit 1
+    fi
     echo "retrying..."
     sleep 10
   done

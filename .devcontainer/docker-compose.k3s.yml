@@ -32,7 +32,7 @@ services:
     environment:
       - K3S_TOKEN=${K3S_TOKEN:-k3s}
       - K3S_KUBECONFIG_OUTPUT=/workspaces/shell/tmp/kubeconfig.yaml
-      - K3S_KUBECONFIG_MODE=600
+      - K3S_KUBECONFIG_MODE=644
     volumes:
       - ..:/workspaces/shell:cached
       - k3s-server-node:/etc/rancher/node
