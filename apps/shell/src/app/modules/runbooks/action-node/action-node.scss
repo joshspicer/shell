@@ -1,10 +1,14 @@
 .app-action-node {
+  @apply max-w-[16rem] rounded border border-zinc-400;
+
   border: 1px solid black;
   font-size: 10px;
   width: 150px;
   background: white;
 
   &--active {
+    @apply border-primary drop-shadow-[0_0_5px_rgba(5,0,255,0.15)];
+
     border-color: blue;
   }
 
@@ -16,6 +20,8 @@
   }
 
   &__content {
+    @apply p-2;
+
     width: 100%;
   }
 
