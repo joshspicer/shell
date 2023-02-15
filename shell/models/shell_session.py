@@ -132,6 +132,7 @@ class ShellSession(IDIndexedCloudyBlobject):
         return current - self.start_time
 
     def __repr__(self):
+        # pylint: disable=no-member
         return "<ShellSession (session_id: {} start_time: {} end_time: {} creator: {} location: {} ip: {} target_host: {} reason: {} recording_enabled: {})>".format(
             self.session_id,
             self.start_time,
@@ -143,3 +144,4 @@ class ShellSession(IDIndexedCloudyBlobject):
             self.reason,
             self.recording_enabled,
         )
+        # pylint: enable=no-member
