@@ -94,7 +94,7 @@ export function FormNodeRest({
   );
 
   return (
-    <form onSubmit={handleSubmit} className="mb-2 divide-y">
+    <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
       <div>
         <h2 className="font-bold">Basics</h2>
 
@@ -115,7 +115,9 @@ export function FormNodeRest({
         </div>
       </div>
 
-      <div className="mb-2 pt-5">
+      <div className="border-b-2" />
+
+      <div className="flex flex-col space-y-2">
         <FormSelect
           required
           name="providerId"
@@ -149,7 +151,7 @@ export function FormNodeRest({
           onChange={updateForm}
         />
 
-        <div>
+        <div className="flex flex-col space-y-2">
           <h3>Headers</h3>
 
           <FormKeyValueCreator
@@ -161,7 +163,7 @@ export function FormNodeRest({
           />
         </div>
 
-        <div>
+        <div className="flex flex-col space-y-2">
           <h3>Parameters</h3>
           <FormKeyValueCreator
             headerKey="Query Parameter"
