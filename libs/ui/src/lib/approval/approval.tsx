@@ -3,30 +3,24 @@ import clsx from 'clsx';
 import ApprovalStatusIcon from '../approval-status-icon/approval-status-icon';
 import TextDuration from '../text/duration/text-duration';
 
-import TextLink from '../text/text-link/text-link';
-
 type ApprovalProps = {
-  id: string;
   avatarUrl: string;
   requestorEmail: string;
   responderEmail?: string;
   prompt?: string;
   command?: string;
   status: ApprovalStatus;
-  hideActions?: boolean;
   border?: boolean;
   createdAt: Date;
 };
 
 export function Approval({
-  id,
   prompt,
   command,
   avatarUrl,
   requestorEmail,
   responderEmail,
   status,
-  hideActions,
   border,
   createdAt = new Date(),
 }: ApprovalProps) {
@@ -59,7 +53,6 @@ export function Approval({
         status={status}
         selfApproved={requestorEmail === responderEmail}
       />
-      {!hideActions && <TextLink to={`/approvals/${id}`}>Details</TextLink>}
     </div>
   );
 }

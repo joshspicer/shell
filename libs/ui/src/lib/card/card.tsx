@@ -53,13 +53,23 @@ export function CardBlock({
 export interface CardProps {
   children: React.ReactNode;
   className?: string;
+  hover?: boolean;
 }
 
-export function Card({ children, className: classNameOverride }: CardProps) {
+export function Card({
+  children,
+  className: classNameOverride,
+  hover = false,
+}: CardProps) {
   const className = useMemo(
     () =>
-      `rounded border border-zinc-300 divide-y divide-zinc-300 bg-white ${classNameOverride}`,
-    [classNameOverride],
+      clsx(
+        `rounded border border-zinc-300 divide-y divide-zinc-300 bg-white ${classNameOverride}`,
+        {
+          'hover:bg-zinc-200': hover,
+        },
+      ),
+    [classNameOverride, hover],
   );
 
   return <div className={className}>{children}</div>;

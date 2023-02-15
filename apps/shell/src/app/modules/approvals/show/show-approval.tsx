@@ -53,7 +53,6 @@ export function Show() {
     return (
       <div className="w-3/4">
         <Approval
-          id={approval.id}
           requestorEmail={approval.requestor.email}
           responderEmail={approval.responder?.email}
           prompt={approval.destinationServer}
@@ -61,10 +60,9 @@ export function Show() {
           status={approval.status}
           avatarUrl={approval.requestor.avatarUrl}
           createdAt={approval.createdAt}
-          hideActions
         />
 
-        <Card className="mt-8 mb-6">
+        <Card className="mt-4 mb-6">
           {approval.prompt && (
             <ApprovalField label="Prompt" value={approval.prompt} />
           )}

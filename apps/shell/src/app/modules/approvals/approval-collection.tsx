@@ -1,8 +1,8 @@
 import { ApprovalStatus } from '@cased/data';
-import { Card, TextTitle } from '@cased/ui';
+import { TextTitle } from '@cased/ui';
 import { useMemo } from 'react';
 import { useStoreState, useStoreActions } from '@cased/redux';
-import ApprovalsBlock from './approvals-block';
+import ApprovalCardCollection from './approval-card-block-collection';
 import ReadyGuard from '../../guards/ready/ready-guard';
 
 export default function ApprovalCollection() {
@@ -14,7 +14,10 @@ export default function ApprovalCollection() {
       ({ status }) => status === ApprovalStatus.Open,
     );
     return (
-      <ApprovalsBlock approvals={openApprovals} emptyText="No open approvals" />
+      <ApprovalCardCollection
+        approvals={openApprovals}
+        emptyText="No open approvals"
+      />
     );
   }, [approvals]);
 
@@ -23,7 +26,7 @@ export default function ApprovalCollection() {
       ({ status }) => status !== ApprovalStatus.Open,
     );
     return (
-      <ApprovalsBlock
+      <ApprovalCardCollection
         approvals={closedApprovals}
         emptyText="No closed approvals"
       />
@@ -36,13 +39,13 @@ export default function ApprovalCollection() {
         Open approval requests
       </TextTitle>
 
-      <Card>{openApprovalElements}</Card>
+      {openApprovalElements}
 
       <TextTitle size="lg" className="mt-8 mb-4">
         Closed approval requests
       </TextTitle>
 
-      <Card>{closedApprovalElements}</Card>
+      {closedApprovalElements}
     </ReadyGuard>
   );
 }
