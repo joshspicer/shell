@@ -33,6 +33,16 @@ export function Show() {
   );
 
   const populate = useCallback(() => id && populateId(id), [id, populateId]);
+
+  const promptFormat = useMemo(() => {
+    if (!approval?.prompt) return '';
+
+    try {
+      return JSON.stringify(JSON.parse(approval.prompt), null, 2);
+    } catch (error) {
+      return approval.prompt;
+    }
+  }, [approval]);
   const approvalElement = useMemo(() => {
     if (!approval) {
       return null;
@@ -64,7 +74,14 @@ export function Show() {
 
         <Card className="mt-4 mb-6">
           {approval.prompt && (
-            <ApprovalField label="Prompt" value={approval.prompt} />
+            <CardBlock>
+              <TextBlock className="flex items-center text-sm font-bold text-zinc-900">
+                Prompt
+              </TextBlock>
+              <pre className="overflow-x-auto text-sm text-zinc-700">
+                {promptFormat}
+              </pre>
+            </CardBlock>
           )}
           {approval.command && (
             <ApprovalField label="Command" value={approval.command} />
@@ -116,7 +133,7 @@ export function Show() {
         )}
       </div>
     );
-  }, [approval, updateApproval]);
+  }, [approval, updateApproval, promptFormat]);
 
   if (!id) {
     return <NotFoundGuard />;

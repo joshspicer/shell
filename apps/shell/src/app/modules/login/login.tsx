@@ -1,9 +1,8 @@
 import { useStoreActions } from '@cased/redux';
-import { Button, FormInputText } from '@cased/ui';
+import { Button, FormInputText, Logo } from '@cased/ui';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageWrapper from '../../routes/page-wrapper';
-import { ReactComponent as CasedLogo } from './cased-logo.svg';
 
 export function Login() {
   const navigate = useNavigate();
@@ -37,10 +36,9 @@ export function Login() {
         className="container mx-auto mt-10 max-w-xs px-5"
       >
         <div className="flex flex-col space-y-4">
-          <h1 className="mx-auto flex items-center space-x-2">
-            <CasedLogo className="inline-block h-8 w-8" />
-            <span className="font-medium text-gray-900">Cased</span>
-          </h1>
+          <div className="text-center">
+            <Logo />
+          </div>
 
           <form onSubmit={onSubmit} className="flex flex-col space-y-4">
             <FormInputText
