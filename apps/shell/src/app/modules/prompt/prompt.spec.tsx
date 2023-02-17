@@ -9,6 +9,7 @@ import {
   PromptWebSocket,
 } from '@cased/redux';
 import { Terminal } from 'xterm';
+import { AxiosError } from 'axios';
 import Prompt from './prompt';
 
 const fakeToken =
@@ -18,6 +19,10 @@ interface IOptions {
   mockWebSocketError?: boolean;
   injections?: Record<string, unknown>;
 }
+
+const mockConsoleError = jest
+  .spyOn(console, 'error')
+  .mockImplementation(() => {});
 
 const setup = (options: IOptions = {}) => {
   const { injections = {}, mockWebSocketError = false } = options;
@@ -123,19 +128,21 @@ describe('Prompt', () => {
   });
 
   it('displays error when authentication fails', async () => {
-    const { mockWebSocket, expectTerminalOutput, expectWebSocketStatus } =
-      setup({ mockWebSocketError: true });
+    const { mockWebSocket, expectWebSocketStatus, mockStore } = setup({
+      mockWebSocketError: true,
+    });
 
-    await expectTerminalOutput('Failed to connect to my-prompt');
+    await expectWebSocketStatus(WebSocketStatus.Disconnected);
     await waitFor(() =>
       expect(mockWebSocket.authenticate).toHaveBeenCalledWith(fakeToken),
     );
-
-    await expectWebSocketStatus(WebSocketStatus.Disconnected);
+    expect(mockStore.getState().notifications.messages[0].message).toBe(
+      'Failed to authenticate web socket',
+    );
   });
 
   it(`Fails to run if the user doesn't have access`, async () => {
-    const { expectTerminalOutput } = setup({
+    const { mockStore, expectWebSocketStatus } = setup({
       injections: {
         promptService: {
           get: async (slug: string) =>
@@ -147,11 +154,14 @@ describe('Prompt', () => {
       },
     });
 
-    await expectTerminalOutput(`You don't have access to my-prompt`);
+    await expectWebSocketStatus(WebSocketStatus.Disconnected);
+    expect(mockStore.getState().notifications.messages[0].message).toBe(
+      'No access',
+    );
   });
 
   it('Fails to run two connections at once', async () => {
-    const { mockStore, mockWebSocket, expectTerminalOutput } = setup();
+    const { mockStore, mockWebSocket } = setup();
 
     await waitFor(() =>
       expect(mockWebSocket.authenticate).toHaveBeenCalledWith(fakeToken),
@@ -167,22 +177,26 @@ describe('Prompt', () => {
       { wrapper: BrowserRouter },
     );
 
-    await expectTerminalOutput('Failed to connect to my-prompt');
+    expect(mockConsoleError).toBeCalledWith('Connection already in progress');
+    mockConsoleError.mockReset();
   });
 
   it('Fails to run if the url lookup fails', async () => {
-    const { expectTerminalOutput } = setup({
+    const { expectWebSocketStatus, mockStore } = setup({
       injections: {
         promptService: {
           get: async (slug: string) =>
             ({ name: slug } as Partial<typeof PromptType>),
           getWebSocketUrl: () => {
-            throw new Error("Can't find prompt");
+            throw new AxiosError("Can't find prompt");
           },
         },
       },
     });
 
-    await expectTerminalOutput(`Failed to connect to my-prompt`);
+    await expectWebSocketStatus(WebSocketStatus.Disconnected);
+    expect(mockStore.getState().notifications.messages[0].message).toBe(
+      'Failed to connect',
+    );
   });
 });

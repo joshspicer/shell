@@ -15,14 +15,10 @@ from shell.models.base import Base
 from shell.controllers.v2 import BaseMixin
 from shell.errors import InvalidValueError
 from shell.models import (
-    Approval,
-    ApprovalSettings,
     LogEntry,
 )
 from shell.models.prompt import Prompt
 from shell.models.worker import save_worker_for_session, recycle_worker, clients
-
-from shell.utils import cased_shell_url, json_decode
 
 
 class ApiPromptSessionsController(BaseMixin, tornado.web.RequestHandler):
@@ -48,30 +44,10 @@ class ApiPromptSessionsController(BaseMixin, tornado.web.RequestHandler):
                 if reason:
                     self._reason = reason
             self.result.update(status=self._reason)
-            self.set_status(200)
+            self.set_status(status_code)
             self.finish(self.result)
         else:
             super(ApiPromptSessionsController, self).write_error(status_code, **kwargs)
-
-    def _set_token(self, token):
-        # set the user's JWT after validating it
-        if token:
-            # validate jwt and set it
-            if self.expired_jwt(token):
-                return self._nuke_session_and_redirect_due_to(
-                    Exception("JWT expired, sending back to Cased to re-authenticate.")
-                )
-            elif self.validate_jwt(token):
-                self.set_secure_cookie("token", token)
-                return True
-            else:
-                logging.error("Invalid JWT. Check your JWT_SIGNING_KEY.")
-                self.redirect("/v2/logout")
-                return False
-        else:
-            # redirect to login
-            self.redirect("/v2/logout")
-            return False
 
     def _log_session(self, session_id, human_location, ip, target_host, reason, prompt):
         record_output = self.current_casedshell().record_output
@@ -118,7 +94,6 @@ class ApiPromptSessionsController(BaseMixin, tornado.web.RequestHandler):
             raise tornado.web.HTTPError(400, "No prompt found for '{}'.".format(slug))
 
         username = self.get_argument("username", prompt.username)
-        current_user = self.get_current_user()
 
         self._check_origin()
 

@@ -69,11 +69,13 @@ export const promptService = {
     );
 
     const shellInfo = response.data;
+    const errorMessage = shellInfo.status;
+
     // istanbul ignore else
     if (response.status === 401) {
       throw new PromptAccessError(slug);
     } else if (response.status !== 200) {
-      throw new Error(`Something went wrong: ${response.status}`);
+      throw new Error(`Something went wrong: ${errorMessage}`);
     } else if (!shellInfo.session_id || !shellInfo.id) {
       console.error(
         'Response is empty when establishing websocket connection. Aborting connection. Connection info',
@@ -85,7 +87,7 @@ export const promptService = {
       );
 
       throw new Error(
-        'Shell connection failed. Data missing. See logs for details',
+        `Shell connection failed. Data missing. ${errorMessage}. See logs for details`,
       );
     }
 

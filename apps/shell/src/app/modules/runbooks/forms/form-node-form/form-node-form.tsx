@@ -93,9 +93,8 @@ export function FormNodeForm({
   const printFields = useMemo(
     () =>
       fields.map(({ name, type, options, id }, index) => (
-        <div className="space-y-4">
+        <div className="space-y-4" key={id}>
           <FormFields
-            key={id}
             name={name}
             id={id}
             type={type}

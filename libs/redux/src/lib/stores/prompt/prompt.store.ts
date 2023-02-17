@@ -1,6 +1,7 @@
 import { ApprovalStatus } from '@cased/data';
-import { PromptAccessError } from '@cased/remotes';
+import { PromptAccessError, routerService } from '@cased/remotes';
 import { Debounce } from '@cased/utilities';
+import { AxiosError } from 'axios';
 import { Action, action, Thunk, thunk } from 'easy-peasy';
 import { Terminal } from 'xterm';
 import { factory } from '../../utils/factory';
@@ -43,7 +44,7 @@ type IPromptStore = {
     { slug: string; token: string; term: Terminal; approvalStatus: string },
     IStoreInjections
   >;
-  dispose: Thunk<IPromptStore, never, IStoreInjections>;
+  dispose: Thunk<IPromptStore, CloseEvent | undefined, IStoreInjections>;
   waitForApproval: Thunk<
     IPromptStore,
     { approvalId: string },
@@ -105,7 +106,7 @@ export const promptStore: IPromptStore = {
     async (
       actions,
       { slug, token, term, approvalStatus, ...rest },
-      { injections: { promptService }, getState },
+      { injections: { promptService }, getState, dispatch },
     ) => {
       const isReadyToConnect = [
         WebSocketStatus.Disconnected,
@@ -113,7 +114,8 @@ export const promptStore: IPromptStore = {
       ].includes(getState().status);
 
       if (!isReadyToConnect) {
-        throw new Error('Connection already in progress');
+        console.error('Connection already in progress');
+        return;
       }
 
       const originalId = getState().webSocketId;
@@ -142,11 +144,20 @@ export const promptStore: IPromptStore = {
 
         actions.dispose();
         if (error instanceof PromptAccessError) {
-          throw error;
-        } else {
+          dispatchNotification(dispatch, 'No access', NotificationType.Error);
+        } else if (error instanceof AxiosError) {
+          const { response } = error as AxiosError<{ status: string }>;
           // istanbul ignore next
-          throw new Error('Failed to get web socket url');
+          dispatchNotification(
+            dispatch,
+            response?.data.status || 'Failed to connect',
+            NotificationType.Error,
+          );
+        } else if (error instanceof Error) {
+          dispatchNotification(dispatch, error.message, NotificationType.Error);
         }
+
+        return;
       }
 
       // Connect and authenticate the web socket
@@ -156,7 +167,7 @@ export const promptStore: IPromptStore = {
         if (isCanceled()) return;
 
         ws = factory.createWebSocket(url);
-        ws.onClose(() => actions.dispose());
+        ws.onClose(actions.dispose);
         actions.setWebSocket(ws);
 
         ws.onMessage((data) => {
@@ -172,7 +183,12 @@ export const promptStore: IPromptStore = {
         // istanbul ignore next
         if (isCanceled()) return;
         actions.dispose();
-        throw new Error('Failed to authenticate web socket');
+        dispatchNotification(
+          dispatch,
+          'Failed to authenticate web socket',
+          NotificationType.Error,
+        );
+        return;
       }
 
       // Terminal connected!
@@ -185,7 +201,8 @@ export const promptStore: IPromptStore = {
     },
   ),
 
-  dispose: thunk(async (actions, _, { getState }) => {
+  dispose: thunk(async (actions, evt, { getState, dispatch }) => {
+    routerService.navigate('/dashboard');
     actions.incrementWebSocketId();
     actions.setStatus(WebSocketStatus.Disconnected);
     actions.setPromptSessionId(undefined);
@@ -194,6 +211,9 @@ export const promptStore: IPromptStore = {
     if (webSocket) {
       webSocket.close();
       actions.setWebSocket(undefined);
+      if (evt?.reason) {
+        dispatchNotification(dispatch, evt.reason, NotificationType.Success);
+      }
     }
   }),
 
