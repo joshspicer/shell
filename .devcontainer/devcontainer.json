@@ -67,7 +67,8 @@
     "sleistner.vscode-fileutils",
     "sysoev.vscode-open-in-github",
     "vsls-contrib.codetour",
-    "zainchen.json"
+    "zainchen.json",
+    "jetmartin.bats"
   ],
   "forwardPorts": [4200, 8080, 8888, 8889],
   "portsAttributes": {

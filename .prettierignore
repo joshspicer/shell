@@ -29,6 +29,7 @@
 /.github/workflows/matchers/*.json
 /charts/*/files/*.y?ml
 /charts/*/templates/*.y?ml
+/charts/*/templates/tests/*.y?ml
 /charts/*/README.md
 /.husky
 /.storage/**

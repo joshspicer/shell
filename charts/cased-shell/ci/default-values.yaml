@@ -1,0 +1,6 @@
+# If needed, you can uncomment the below section to test your chart using images
+# containing the changes on this branch. This won't work if pushed however.
+# config:
+#   image: registry:5000/shell:latest
+# sshd:
+#   image: registry:5000/sshd-demo:latest

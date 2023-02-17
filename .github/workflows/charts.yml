@@ -12,7 +12,7 @@ on:
       - labeled
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore
     paths:
-      - '.github/workflows/charts-lint-test.yml'
+      - '.github/workflows/charts.yml'
       - 'charts/**'
       - chart_schema.yaml
       - lintconf.yaml
@@ -23,8 +23,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Lint
+  unit:
+    name: Lint and Unit tests on Helm ${{ matrix.helm_version }}
     # Only run on PR-labeling events if the label is helm:push
     if: |
       github.event.action != 'labeled' ||
@@ -64,11 +64,14 @@ jobs:
       - name: Run chart-testing (lint)
         run: ct lint --config ct.yaml
 
+      - name: Run unit tests
+        run: make -C charts test
+
       - name: List charts
         id: charts
         run: |
           set -x
-          echo "ls=$(find charts -maxdepth 1 -mindepth 1 -type d | cut -f 2 -d / | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "ls=$(find charts -maxdepth 1 -mindepth 1 -type d | grep -v _ | cut -f 2 -d / | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - name: Construct Chart Matrix
         id: charts-json
@@ -83,7 +86,7 @@ jobs:
         id: tests
         run: |
           set -x
-          echo "ls=$(ls -1 charts/*/ci/* | sed 's/.yaml//' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "ls=$(ls -1 charts/*/ci/*.yaml | sed 's/.yaml//' | tr '\n' ' ')" >> $GITHUB_OUTPUT
 
       - name: Construct Test Matrix
         id: tests-json
@@ -104,19 +107,19 @@ jobs:
           fi
 
   test:
-    name: Test charts/${{ matrix.chart }}/ci/${{ matrix.test }}.yaml on Helm ${{ matrix.helm_version }}
+    name: Integration test of ${{ matrix.chart }} / ${{ matrix.test }}.yaml on Helm ${{ matrix.helm_version }}
     runs-on: ubuntu-latest
-    needs: lint
+    needs: unit
     # Runs on all pushes to the default branch and if the lint job detects
     # changes.
     if: |
       github.ref == format('refs/heads/{0}', github.event.repository.default_branch) ||
       contains(github.ref, format('gh-readonly-queue/{0}/', github.event.repository.default_branch)) ||
-      needs.lint.outputs.changed == 'true'
+      needs.unit.outputs.changed == 'true'
     strategy:
       fail-fast: false
       matrix:
-        include: ${{fromJson(needs.lint.outputs.tests)}}
+        include: ${{fromJson(needs.unit.outputs.tests)}}
         helm_version:
           # oldest known supported
           - v3.10.1
@@ -129,10 +132,10 @@ jobs:
 
       - name: Remove tests other than charts/${{ matrix.chart }}/ci/${{ matrix.test }}.yaml
         run: |
-          for f in $(ls -1 charts/*/ci/* | grep -v charts/${{ matrix.chart}}); do
+          for f in $(ls -1 charts/*/ci/*.yaml | grep -v charts/${{ matrix.chart}}); do
             rm -v $f
           done
-          for f in $(ls -1 charts/*/ci/* | grep -v /ci/${{ matrix.test }}.yaml); do
+          for f in $(ls -1 charts/*/ci/*.yaml | grep -v /ci/${{ matrix.test }}.yaml); do
             rm -v $f
           done
 
@@ -164,19 +167,24 @@ jobs:
             cat ct-actions.yaml
 
       - name: Run chart-testing (install)
+        run: ct install --config ct-actions.yaml
+
+      - name: logs
+        if: ${{ always() }}
+        env:
+          NAMESPACE: ${{ matrix.namespace }}
         run: |
-          if ! ct install --config ct-actions.yaml; then
-            set -x
-            kubectl get pods --all-namespaces
-            kubectl get svc --all-namespaces
-            kubectl get endpoints --all-namespaces
-            exit 1
-          fi
+          set +e
+          set -x
+          kubectl get ns
+          kubectl get all --all-namespaces
+          kubectl get ingress --all-namespaces
+          kubectl get events --all-namespaces
 
   push:
     name: Push oci://ghcr.io/cased/${{ matrix.chart }}
     runs-on: ubuntu-latest
-    needs: [lint, test]
+    needs: [unit, test]
     # Runs on pushes to the default branch to get version bumps. Only runs on
     # PRs if we have the right label since many PRs can contain an incremented
     # version.
@@ -186,7 +194,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chart: ${{fromJson(needs.lint.outputs.charts)}}
+        chart: ${{fromJson(needs.unit.outputs.charts)}}
     steps:
       - name: Checkout
         uses: actions/checkout@v3

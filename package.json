@@ -12,7 +12,7 @@
     "charts:build": "yarn charts:doc && yarn charts:lint && yarn charts:test",
     "charts:doc": "helm-docs --chart-search-root=charts",
     "charts:lint": "ct lint --config ct.yaml",
-    "charts:test": "ct install --config ct.yaml",
+    "charts:test": "make -C charts test; ct install --config ct.yaml",
     "charts:server": "yarn charts:doc && yarn charts:install && yarn charts:port-forward",
     "charts:install": "bash ./.devcontainer/script/charts-install .devcontainer/helm/shell-dev.yaml ./charts/cased-shell/",
     "charts:port-forward": "bash ./.devcontainer/script/charts-port-forward",
