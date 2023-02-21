@@ -2,6 +2,8 @@
 # Usage: bash ./.devcontainer/script/charts-install .devcontainer/helm/shell-dev.yaml ./charts/cased-shell/
 set -e -o pipefail
 
+. $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../common.sh
+
 # Extract environment matching value basename, e.g. SHELL_DEV_*
 name=$(basename $1 .yaml)
 env_prefix=$(echo $name | tr '[:lower:]' '[:upper:]' | tr '-' '_')
@@ -119,9 +121,9 @@ if gh pr view > /dev/null && gh pr view | grep ^labels: | grep -q docker:pr-imag
     echo "--set=sshd.image=ghcr.io/cased/sshd-demo:pr-${pr_number}" >> .env.helm-args.${name}
     echo "--set=podAnnotations.restart-me=please-${RANDOM}" >> .env.helm-args.${name}
   fi
-else 
-  .devcontainer/script/build 
-  .devcontainer/script/push
+else
+  waitForRegistry ${REGISTRY}
+  .devcontainer/script/build --push --set *.cache-to=''
   echo "--set=config.image=registry:5000/shell:latest" >> .env.helm-args.${name}
   echo "--set=sshd.image=registry:5000/sshd-demo:latest" >> .env.helm-args.${name}
   echo "--set=podAnnotations.restart-me=please-${RANDOM}" >> .env.helm-args.${name}

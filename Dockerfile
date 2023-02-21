@@ -20,8 +20,33 @@ RUN apt-get clean && apt-get update && \
 
 FROM python:3.10-bullseye as cased-base
 
+RUN apt-get clean && apt-get update && \
+    apt-get install -y \
+    curl \
+    jq \
+    libksba8 \
+    libexpat1 \
+    libexpat1-dev \
+    libnss3-tools \
+    linux-libc-dev \
+    lsof \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 ARG TARGETARCH
 ENV TARGETARCH=${TARGETARCH:-amd64}
+
+ENV TINI_VERSION=v0.19.0
+RUN wget --no-cookies --quiet https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH} \
+    && wget --no-cookies --quiet https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH}.sha256sum \
+    && echo "$(cat tini-${TARGETARCH}.sha256sum)" | sha256sum -c \
+    && mv tini-${TARGETARCH} /sbin/tini && chmod +x /sbin/tini
+
+ENV STEP_VERSION=0.20.0
+RUN echo ${TARGETARCH} && curl -LO https://github.com/smallstep/cli/releases/download/v${STEP_VERSION}/step_linux_${STEP_VERSION}_${TARGETARCH}.tar.gz && \
+    tar xzvf step_linux_${STEP_VERSION}_${TARGETARCH}.tar.gz && \
+    mv step_*/bin/step /usr/local/bin/step && \
+    step -version && \
+    rm step_linux_${STEP_VERSION}_${TARGETARCH}.tar.gz
 
 COPY --link .nvmrc /root/
 ENV NVM_VERSION=v0.39.2
@@ -37,34 +62,8 @@ RUN NODE_VERSION=$(cat /root/.nvmrc) && \
   tar -xJf "node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner && \
   : verify install && \
   node --version | grep $NODE_VERSION && \
-  npm --version
-
-RUN apt-get clean && apt-get update && \
-    apt-get install -y \
-    curl \
-    jq \
-    libksba8 \
-    libexpat1 \
-    libexpat1-dev \
-    libnss3-tools \
-    linux-libc-dev \
-    lsof \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    npm install -g npm && \
+  npm --version && \
     npm install -g yarn
-
-ENV TINI_VERSION=v0.19.0
-RUN wget --no-cookies --quiet https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH} \
-    && wget --no-cookies --quiet https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH}.sha256sum \
-    && echo "$(cat tini-${TARGETARCH}.sha256sum)" | sha256sum -c \
-    && mv tini-${TARGETARCH} /sbin/tini && chmod +x /sbin/tini
-
-ENV STEP_VERSION=0.20.0
-RUN echo ${TARGETARCH} && curl -LO https://github.com/smallstep/cli/releases/download/v${STEP_VERSION}/step_linux_${STEP_VERSION}_${TARGETARCH}.tar.gz && \
-    tar xzvf step_linux_${STEP_VERSION}_${TARGETARCH}.tar.gz && \
-    mv step_*/bin/step /usr/local/bin/step && \
-    step -version && \
-    rm step_linux_${STEP_VERSION}_${TARGETARCH}.tar.gz
 
 RUN mkdir -p /code && \
   useradd -u 1000 -ms /bin/bash app && \
@@ -73,15 +72,15 @@ RUN mkdir -p /code && \
 WORKDIR /code
 USER app
 
-FROM cased-base as cased-python
-COPY --link --chown=1000:1000 requirements.txt /code/
-RUN LIBSODIUM_MAKE_ARGS=-j4 pip install -r requirements.txt
-ENV PATH=${PATH}:/home/app/.local/bin
-
 FROM cased-base as cased-node
 COPY --link --chown=1000:1000 package.json yarn.lock /code/
 RUN bash -xce "COUNTER=0; until [ \$COUNTER -gt 2 ] || yarn install --frozen-lockfile --network-timeout 1000000; do COUNTER=\$(expr \$COUNTER + 1); echo retrying; done; [ \$COUNTER -lt 2 ]"
 COPY --link --chown=1000:1000 *.json *.js /code/
+
+FROM cased-base as cased-python
+COPY --link --chown=1000:1000 requirements.txt /code/
+RUN LIBSODIUM_MAKE_ARGS=-j4 pip install -r requirements.txt
+ENV PATH=${PATH}:/home/app/.local/bin
 
 FROM cased-node as cased-nx
 COPY --link --chown=1000:1000 apps /code/apps

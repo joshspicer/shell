@@ -11,7 +11,7 @@ exec 2>&1
 # Remove any previous markers of completion.
 rm -f log/.postAttachCommand.log
 
-( timeout 600 .devcontainer/script/build ) || true
+.devcontainer/script/build --push
 
 # Remove default first run notice
 if [ -f /workspaces/.codespaces/shared/first-run-notice.txt ]; then

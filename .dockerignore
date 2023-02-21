@@ -10,3 +10,4 @@ shell/static/css/style.css
 .github
 __pycache__
 charts
+tmp

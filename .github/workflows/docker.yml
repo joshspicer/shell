@@ -66,9 +66,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: docker/setup-qemu-action@v2
-      - uses: docker/setup-buildx-action@v2
-
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       - id: docker_meta
         uses: docker/metadata-action@v3
         with:
@@ -97,31 +96,10 @@ jobs:
           scan-ref: ${{ matrix.image.dockerfile }}
           trivyignores: ${{ matrix.image.context }}/.trivyignore
 
-      - name: build
-        uses: docker/build-push-action@v3
-        with:
-          context: ${{ matrix.image.context }}
-          file: ${{ matrix.image.dockerfile }}
-          platforms: ${{ matrix.image.platforms }}
-          build-args: |
-            ${{ matrix.image.args }}
-            GIT_SHA=${{ github.sha }}
-          pull: true
-          tags: |
-            ${{ steps.docker_meta.outputs.tags }}
-            ghcr.io/cased/${{ matrix.image.name }}:${{ github.sha }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
-          cache-from: |
-            type=registry,ref=ghcr.io/cased/${{ matrix.image.name }}:${{ github.event.repository.default_branch }}
-            type=registry,ref=ghcr.io/cased/${{ matrix.image.name }}:${{ contains(github.event.pull_request.labels.*.name, 'docker:pr-image') && format('pr-{0}', github.event.number) || github.event.repository.default_branch }}
-            type=registry,ref=ghcr.io/cased/${{ matrix.image.name }}-cache:${{ github.event.repository.default_branch }}
-            type=registry,ref=ghcr.io/cased/${{ matrix.image.name }}-cache:${{ contains(github.event.pull_request.labels.*.name, 'docker:pr-image') && format('pr-{0}', github.event.number) || github.event.repository.default_branch }}
-            type=gha,scope=${{ matrix.image.name }}-${{ github.event.repository.default_branch }}
-            type=gha,scope=${{ matrix.image.name }}-${{ github.ref_name }}
-
-      - name: cache
+      - name: build and cache
         uses: docker/build-push-action@v3
         continue-on-error: true
+        id: build
         with:
           context: ${{ matrix.image.context }}
           file: ${{ matrix.image.dockerfile }}
@@ -144,6 +122,29 @@ jobs:
           cache-to: |
             type=gha,mode=max,scope=${{ matrix.image.name }}-${{ github.ref_name }}
 
+      - name: build without cache
+        uses: docker/build-push-action@v3
+        if: steps.build.outcome == 'failure'
+        with:
+          context: ${{ matrix.image.context }}
+          file: ${{ matrix.image.dockerfile }}
+          platforms: ${{ matrix.image.platforms }}
+          build-args: |
+            ${{ matrix.image.args }}
+            GIT_SHA=${{ github.sha }}
+          pull: true
+          tags: |
+            ${{ steps.docker_meta.outputs.tags }}
+            ghcr.io/cased/${{ matrix.image.name }}:${{ github.sha }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          cache-from: |
+            type=registry,ref=ghcr.io/cased/${{ matrix.image.name }}:${{ github.event.repository.default_branch }}
+            type=registry,ref=ghcr.io/cased/${{ matrix.image.name }}:${{ contains(github.event.pull_request.labels.*.name, 'docker:pr-image') && format('pr-{0}', github.event.number) || github.event.repository.default_branch }}
+            type=registry,ref=ghcr.io/cased/${{ matrix.image.name }}-cache:${{ github.event.repository.default_branch }}
+            type=registry,ref=ghcr.io/cased/${{ matrix.image.name }}-cache:${{ contains(github.event.pull_request.labels.*.name, 'docker:pr-image') && format('pr-{0}', github.event.number) || github.event.repository.default_branch }}
+            type=gha,scope=${{ matrix.image.name }}-${{ github.event.repository.default_branch }}
+            type=gha,scope=${{ matrix.image.name }}-${{ github.ref_name }}
+
       - name: push
         if: startsWith(github.ref, 'refs/tags/') || github.ref == format('refs/heads/{0}', github.event.repository.default_branch) || contains(github.event.pull_request.labels.*.name, 'docker:pr-image')
         uses: docker/build-push-action@v3
@@ -155,7 +156,12 @@ jobs:
             ${{ matrix.image.args }}
             GIT_SHA=${{ github.sha }}
           pull: true
-          push: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == format('refs/heads/{0}', github.event.repository.default_branch) || contains(github.event.pull_request.labels.*.name, 'docker:pr-image') }}
+          # This build is run on a schedule to keep the cache stores it
+          # publishes to warm. Pushing the resulting images causes unnecessary
+          # churn in our image registry, so we don't push them in that case. We
+          # continue to push images in all other cases covered by the `if`
+          # condition of this step.
+          push: ${{ github.event_name != 'schedule' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: |

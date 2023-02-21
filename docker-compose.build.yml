@@ -1,0 +1,38 @@
+# Used by .devcontainer/script/build and ./test
+# In the root of the project since buildx bake doesn't yet support relative context paths
+# https://github.com/docker/buildx/issues/1028#issuecomment-1303125897
+version: '3.9'
+
+services:
+  shell:
+    image: ${REGISTRY}/shell:latest
+    build:
+      context: .
+      cache_from:
+        - ${REGISTRY}/shell:latest
+        - ghcr.io/cased/shell:main
+        - ghcr.io/cased/shell-cache:main
+        - type=gha,scope=shell-main,url=${ACTIONS_CACHE_URL},token=${ACTIONS_CACHE_TOKEN}
+        - type=local,src=${LOCAL_CACHE_FROM:-tmp/buildx}/shell
+      cache_to:
+        - type=local,dest=${LOCAL_CACHE_TO:-tmp/buildx}/shell,mode=max
+      dockerfile: Dockerfile
+      args:
+        - TARGETARCH=${TARGETARCH}
+        - GIT_SHA=${GIT_SHA}
+  sshd-demo:
+    image: ${REGISTRY}/sshd-demo:latest
+    build:
+      context: .devcontainer/sshd
+      cache_from:
+        - ${REGISTRY}/sshd-demo:latest
+        - ghcr.io/cased/sshd-demo:main
+        - ghcr.io/cased/sshd-demo-cache:main
+        - type=gha,scope=ssh-demo-main,url=${ACTIONS_CACHE_URL},token=${ACTIONS_CACHE_TOKEN}
+        - type=local,src=${LOCAL_CACHE_FROM:-tmp/buildx}/sshd-demo
+      cache_to:
+        - type=local,dest=${LOCAL_CACHE_TO:-tmp/buildx}/sshd-demo,mode=max
+      dockerfile: Dockerfile
+      args:
+        - TARGETARCH=${TARGETARCH}
+        - GIT_SHA=${GIT_SHA}

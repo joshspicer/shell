@@ -18,18 +18,15 @@ function runTest() {
 }
 
 if [ "${IN_CONTAINER}" != "true" ]; then
-    docker buildx install
+  . $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.devcontainer/common.sh
 
-    docker buildx build \
-        --build-arg BUILDKIT_INLINE_CACHE=1 \
-        --build-arg=GIT_SHA=$(git rev-parse --short HEAD) \
-        --cache-from=type=registry,ref=ghcr.io/cased/shell:main \
-        --cache-from=type=registry,ref=ghcr.io/cased/shell-cache:main \
-        --pull \
-        -f Dockerfile \
-        --load \
-        -t casedhub-shell-test \
-        .
+    # Don't write to the local cache if we're running locally or on a PR build
+    if [ -n "$CODESPACE_NAME" ] || ( [ -n "$GITHUB_REF_NAME" ] && [ "$GITHUB_REF_NAME" != "main" ] ) ; then
+        docker buildx bake -f docker-compose.build.yml --load --set *.cache-to=''
+    else
+        docker buildx bake -f docker-compose.build.yml --load
+    fi
+    docker tag registry:5000/shell:latest casedhub-shell-test
 
     if [ -n "$1" ]; then
         runTest "$1"

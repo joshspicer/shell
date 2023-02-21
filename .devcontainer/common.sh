@@ -1,3 +1,33 @@
+#!/bin/bash
+
+export DOCKER_BUILDKIT=1
+export BUILDKIT_PROGRESS=plain
+GIT_SHA="$(git rev-parse --short HEAD)"
+export GIT_SHA
+: "${REGISTRY:=registry:5000}"
+export REGISTRY
+
+TARGETARCH=""
+case $(uname -m) in
+    x86_64) TARGETARCH="amd64" ;;
+    arm)    dpkg --print-architecture | grep -q "arm64" && TARGETARCH="arm64" || TARGETARCH="arm" ;;
+esac
+export TARGETARCH
+
+# Create a custom builder that can read from the GHA cache
+# (https://docs.docker.com/build/cache/backends/gha/) and push to our local
+# registry.
+docker buildx install
+if docker buildx inspect | grep -q docker-container; then
+  :
+else
+  docker buildx create --use \
+    --name=docker-container \
+    --driver-opt "network=shell_devcontainer_default" \
+    --config "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/buildkit.toml"
+  echo "FROM scratch" | docker buildx build -
+fi
+
 # Output the name of a devcontainer, handling the difference in separator
 # between Docker Compose v1 and v2 on the host.
 # Amusingly, Docker Compose v1 is running inside the container, so we need to

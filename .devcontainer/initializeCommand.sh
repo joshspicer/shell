@@ -1,21 +1,9 @@
 #!/bin/bash
 set -e
 
-. $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/common.sh
-
-
 mkdir -p log
 exec > >(tee -ai log/devcontainer.log)
 exec 2>&1
-
-echo "DOCKER_BUILDKIT=1" > .env
-docker buildx install
-
-# Pre-pull in parallel
-docker compose \
-  -f .devcontainer/docker-compose.yml \
-  -f .devcontainer/docker-compose.k3s.yml \
-  pull
 
 if grep -q CODESPACE_NAME= /root/.codespaces/shared/.env 2>/dev/null; then
   echo DEVCONTAINER_ENV_FILE=../.env >> .devcontainer/.env

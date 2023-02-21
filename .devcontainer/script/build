@@ -3,16 +3,7 @@ set -e
 
 . $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../common.sh
 
-docker buildx install
-
-: ${REGISTRY:=localhost:5000}
-export REGISTRY
-export DOCKER_BUILDKIT=1
-export BUILDKIT_PROGRESS=plain
+mkdir -p $(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../../tmp/buildx
 
 echo "Building..."
-timeout 300 docker compose \
-  -f .devcontainer/docker-compose.build.yml \
-  build \
-  --build-arg GIT_SHA=$(git rev-parse --short HEAD) \
-  --build-arg BUILDKIT_INLINE_CACHE=1
+docker buildx bake -f docker-compose.build.yml "$@"

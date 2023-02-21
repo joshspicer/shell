@@ -68,5 +68,4 @@ done
 go install github.com/norwoodj/helm-docs/cmd/helm-docs@latest
 GOPRIVATE=github.com go install github.com/cased/cased-cli@latest
 
-( timeout 120 .devcontainer/script/build ) || true
-( timeout 120 .devcontainer/script/push ) || true
+( timeout 120 .devcontainer/script/build --push ) || true
