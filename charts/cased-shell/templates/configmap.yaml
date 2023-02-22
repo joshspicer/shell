@@ -10,3 +10,4 @@ data:
     CASED_SHELL_LOG_LEVEL: '{{ .Values.config.log_level | default `info` }}'
     CASED_SHELL_TLS: internal
     ALLOWED_ORIGINS: 'https://{{ .Values.ingress.fqdn }}'
+    STORAGE_DIR_VALIDATE: 'true'

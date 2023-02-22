@@ -1,4 +1,4 @@
-{{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) (eq .Values.config.objectStorageBackend "local") -}}
+{{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) (eq .Values.config.objectStorageBackend "pvc") -}}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:

@@ -1,0 +1,22 @@
+# https://helm.sh/docs/topics/chart_tests
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "shell.fullname" . }}-test-keys
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: ping
+      image: alpine/curl
+      args:
+        - -kv
+        - --max-time
+        - "10"
+        - --retry-all-errors
+        - --retry
+        - "3"
+        - --retry-max-time
+        - "30"
+        - '{{ .Values.service.protocol }}://{{ include "shell.fullname" . }}-{{ .Values.service.protocol }}:{{ .Values.service.port }}/v2/.ssh/authorized_keys'
+  restartPolicy: Never

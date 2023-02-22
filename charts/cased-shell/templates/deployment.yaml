@@ -6,6 +6,8 @@ metadata:
     {{- include "shell.labels" . | nindent 4 }}
 spec:
   replicas: 1
+  strategy:
+    type: {{ (and .Values.persistence.enabled (eq .Values.config.objectStorageBackend "pvc")) | ternary "Recreate" "RollingUpdate" }}
   selector:
     matchLabels:
       {{- include "shell.selectorLabels" . | nindent 6 }}
@@ -122,7 +124,7 @@ spec:
       enableServiceLinks: false
       volumes:
         - name: storage
-          {{- if and .Values.persistence.enabled (eq .Values.config.objectStorageBackend "local") }}
+          {{- if and .Values.persistence.enabled (eq .Values.config.objectStorageBackend "pvc") }}
           {{- if .Values.persistence.existingClaim }}
           persistence.existingClaim: {{ .Values.persistence.existingClaim }}
           {{- else }}

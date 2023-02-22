@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -o pipefail -x
+set -e -o pipefail
 
 PORT=8443
 

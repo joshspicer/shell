@@ -6,7 +6,7 @@ test -f /etc/ssh/ssh_host_rsa_key || dpkg-reconfigure openssh-server
 
 printf "Waiting for %s to be ready..." \
   "${CASED_SHELL_ENDPOINT}${PING_PATH}"
-until curl -s --max-time 3 -k "${CASED_SHELL_ENDPOINT}${PING_PATH}"; do
+until curl --fail -s --max-time 3 -k "${CASED_SHELL_ENDPOINT}${PING_PATH}"; do
   sleep 3
   printf .
 done

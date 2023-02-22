@@ -113,6 +113,18 @@ if [ "${CASED_SHELL_MIGRATE}" == "true" ]; then
     echo retrying...
   done
 fi
+
+if [ -n "${STORAGE_DIR_VALIDATE}" ]; then
+  if [ "${STORAGE_BACKEND:=local}" == "local" ]; then
+    if mountpoint "${STORAGE_DIR:=.storage}"; then
+      :
+    else
+      echo "STORAGE_BACKEND is local and storage directory ${STORAGE_DIR} is not a mountpoint" 1>&2
+      exit 1
+    fi
+  fi
+fi
+
 if [ "${NO_DATABASE}" == "true" ]; then
     unset DATABASE_URL
 else
