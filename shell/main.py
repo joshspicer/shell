@@ -43,6 +43,7 @@ from shell.controllers.v2 import (
     api_authorized_responders_routes,
     api_prompts_routes,
     api_login_routes,
+    api_blocks_routes,
 )
 
 from shell.settings import (
@@ -111,6 +112,7 @@ def make_handlers(loop, options):
         *api_approval_check_routes(loop=loop),
         *api_authorized_responders_routes(loop=loop),
         *api_login_routes(loop=loop),
+        *api_blocks_routes(loop=loop),
         *api_runbooks_routes(
             loop=loop, policy=policy, host_keys_settings=host_keys_settings
         ),

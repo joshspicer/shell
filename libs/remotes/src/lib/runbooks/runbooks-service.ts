@@ -95,7 +95,7 @@ const run = async (id: string, data: { runData: INodeRunData }) => {
 const createBlock = async (data: AllBlocks) => {
   const {
     data: { block },
-  } = await axiosInstance.post<IBlockPostResponse>(`/v2/blocks`, {
+  } = await axiosInstance.post<IBlockPostResponse>(`/api/blocks`, {
     block: data,
   });
 
@@ -108,7 +108,7 @@ const updateBlock = async (data: AllBlocks) => {
   const {
     data: { block },
   } = await axiosInstance.patch<IBlockPostResponse>(
-    `/v2/blocks/${data.id}/update`,
+    `/api/blocks/${data.id}/update`,
     { block: data },
   );
 
@@ -118,7 +118,7 @@ const updateBlock = async (data: AllBlocks) => {
 };
 
 const deleteBlock = async (id: string) => {
-  await axiosInstance.delete(`/v2/blocks/${id}/destroy`);
+  await axiosInstance.delete(`/api/blocks/${id}/destroy`);
 };
 
 export const runbooksService = {

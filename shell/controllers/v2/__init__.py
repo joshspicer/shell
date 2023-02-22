@@ -59,6 +59,9 @@ from shell.controllers.v2.api.prompts_controller import (
 from shell.controllers.v2.api.login_controller import (
     routes as api_login_routes,
 )
+from shell.controllers.v2.api.blocks_controller import (
+    routes as api_blocks_routes,
+)
 
 from shell.controllers.v2.api.github_auth_controller import APIGitHubAuthController
 from shell.controllers.v2.api.prompt_access_controller import APIPromptAccessController
