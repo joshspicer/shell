@@ -130,7 +130,7 @@ export const runbooksThunks: Pick<
   populate: thunk(
     async (
       actions,
-      { id, focusNodeId },
+      { id },
       { injections: { runbooksService }, dispatch, getState },
     ) => {
       const activeId = getState().activeNodeId;
@@ -154,9 +154,6 @@ export const runbooksThunks: Pick<
           databases,
           apiProviders,
         });
-
-        if (nodes.length > 0)
-          actions.setFocusId({ id: focusNodeId || nodes[0].id });
       } catch (error) /* istanbul ignore next */ {
         console.error('Runbook page load failed', error);
         dispatchSet404(dispatch, true);

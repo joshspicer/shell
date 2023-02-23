@@ -1,6 +1,12 @@
 import { Button, TextLink } from '@cased/ui';
 import { useStoreActions, useStoreState } from '@cased/redux';
 
+/* istanbul ignore file */
+// This is debug code unavailable in production. There is no need to test it
+
+/**
+ * Debug page for testing routes, auth, and high level functionality. Not available in production.
+ */
 export function Home() {
   const user = useStoreState((store) => store.auth.user);
   const login = useStoreActions((store) => store.auth.login);

@@ -64,11 +64,11 @@ export function LogCard({
             <>
               {endTime ? (
                 <small className="inline-block w-20 rounded bg-gray-700 px-2 py-1 text-center text-xs uppercase text-white">
-                  {endTime ? 'Inactive' : 'Active'}
+                  Inactive
                 </small>
               ) : (
                 <small className="inline-block w-20 rounded bg-emerald-700 px-2 py-1 text-center text-xs uppercase text-emerald-50">
-                  {endTime ? 'Inactive' : 'Active'}
+                  Active
                 </small>
               )}{' '}
               <strong className="font-medium text-gray-900">{email}</strong>{' '}

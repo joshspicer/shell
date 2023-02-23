@@ -1,5 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
+let init = false;
+
 class ResizeObserver {
   callback: globalThis.ResizeObserverCallback;
 
@@ -27,28 +29,32 @@ class DOMMatrixReadOnly {
   }
 }
 
-Object.defineProperties(global.HTMLElement.prototype, {
-  offsetHeight: {
-    get() {
-      return parseFloat(this.style.height) || 1;
-    },
-  },
-  offsetWidth: {
-    get() {
-      return parseFloat(this.style.width) || 1;
-    },
-  },
-});
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(global.SVGElement as any).prototype.getBBox = () => ({
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0,
-});
-
 export const mockReactFlow = () => {
+  if (!init) {
+    Object.defineProperties(global.HTMLElement.prototype, {
+      offsetHeight: {
+        get() {
+          return parseFloat(this.style.height) || 1;
+        },
+      },
+      offsetWidth: {
+        get() {
+          return parseFloat(this.style.width) || 1;
+        },
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (global.SVGElement as any).prototype.getBBox = () => ({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    });
+
+    init = true;
+  }
+
   global.ResizeObserver = ResizeObserver;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   global.DOMMatrixReadOnly = DOMMatrixReadOnly as any;

@@ -185,13 +185,8 @@ export function Runbooks() {
   useEffect(() => {
     if (!focus) return;
 
-    // @TODO Remove as soon as React Flow fixes this issue
-    // The viewport is reporting that it has 0 width and height. This is a workaround to inject the correct focus values.
-    // Please don't ask why dividing by 5 and 8 works. I don't know. But the value almost always perfectly centers the view ¯\_(ツ)_/¯
-    const offset = { x: window.innerWidth / 5, y: window.innerHeight / 8 };
-
     const { x, y } = focus.position;
-    reactFlowInstance?.setCenter(x - offset.x, y - offset.y);
+    reactFlowInstance?.setCenter(x, y);
     setFocusId({});
   }, [setFocusId, reactFlowInstance, focus]);
 
@@ -230,6 +225,7 @@ export function Runbooks() {
       {printPanel}
 
       <ReactFlow
+        fitView
         edgeTypes={edgeTypes}
         nodeTypes={nodeTypes}
         nodes={nodes}

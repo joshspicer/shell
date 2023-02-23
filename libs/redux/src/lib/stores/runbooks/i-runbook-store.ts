@@ -60,11 +60,7 @@ export interface IRunbookStore {
   setFocusId: Action<IRunbookStore, { id?: string }>;
 
   setRunbookMode: Thunk<IRunbookStore, void, IStoreInjections, IStore>;
-  populate: Thunk<
-    IRunbookStore,
-    { id: string; focusNodeId?: string },
-    IStoreInjections
-  >;
+  populate: Thunk<IRunbookStore, { id: string }, IStoreInjections>;
   closePanel: Thunk<IRunbookStore, { confirm?: boolean }, IStoreInjections>;
   markFormDirty: Thunk<IRunbookStore, undefined>;
 
