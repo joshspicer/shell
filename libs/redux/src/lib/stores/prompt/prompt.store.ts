@@ -1,6 +1,6 @@
 import { ApprovalStatus } from '@cased/data';
 import { PromptAccessError, routerService } from '@cased/remotes';
-import { Debounce } from '@cased/utilities';
+import { Debounce, errorToAxiosError } from '@cased/utilities';
 import { AxiosError } from 'axios';
 import { Action, action, Thunk, thunk } from 'easy-peasy';
 import { Terminal } from 'xterm';
@@ -146,7 +146,7 @@ export const promptStore: IPromptStore = {
         if (error instanceof PromptAccessError) {
           dispatchNotification(dispatch, 'No access', NotificationType.Error);
         } else if (error instanceof AxiosError) {
-          const { response } = error as AxiosError<{ status: string }>;
+          const { response } = errorToAxiosError(error);
           // istanbul ignore next
           dispatchNotification(
             dispatch,

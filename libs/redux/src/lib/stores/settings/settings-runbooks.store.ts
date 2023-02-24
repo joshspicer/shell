@@ -1,7 +1,6 @@
 import { IApiProvider, IEntry, IRunbookDatabase } from '@cased/data';
-import { AxiosError } from 'axios';
 import { thunk, Thunk } from 'easy-peasy';
-import { Debounce } from '@cased/utilities';
+import { Debounce, errorToAxiosError } from '@cased/utilities';
 import {
   dispatchAddError,
   dispatchSet404,
@@ -178,10 +177,10 @@ export const settingsRunbooksStore: ISettingsRunbooksStore = {
       try {
         await settingsService.runbooks.setApiProvider(id, provider);
       } catch (error) {
-        const { response } = error as AxiosError<{ reason: string }>;
+        const { response } = errorToAxiosError(error);
         dispatchAddError(
           dispatch,
-          `Failed to save. Please try again. ${response?.data?.reason}`,
+          `Failed to save. Please try again. ${response?.data.reason}`,
         );
 
         result = false;
@@ -202,7 +201,8 @@ export const settingsRunbooksStore: ISettingsRunbooksStore = {
       try {
         await settingsService.runbooks.patchDatabase(id, database);
       } catch (error) {
-        const { response } = error as AxiosError<{ reason: string }>;
+        const { response } = errorToAxiosError(error);
+        // istanbul ignore next
         dispatchAddError(
           dispatch,
           `Failed to save. Please try again. ${response?.data?.reason}`,
@@ -225,11 +225,11 @@ export const settingsRunbooksStore: ISettingsRunbooksStore = {
       try {
         await settingsService.runbooks.postApiProvider(provider);
       } catch (error) {
-        const { response } = error as AxiosError<{ reason: string }>;
+        const { response } = errorToAxiosError(error);
 
         dispatchAddError(
           dispatch,
-          `Failed to save. Please try again. ${response?.data?.reason}`,
+          `Failed to save. Please try again. ${response?.data.reason}`,
         );
 
         result = false;
@@ -251,10 +251,10 @@ export const settingsRunbooksStore: ISettingsRunbooksStore = {
       try {
         await settingsService.runbooks.postDatabase(database);
       } catch (error) {
-        const { response } = error as AxiosError<{ reason: string }>;
+        const { response } = errorToAxiosError(error);
         dispatchAddError(
           dispatch,
-          `Failed to save. Please try again. ${response?.data?.reason}`,
+          `Failed to save. Please try again. ${response?.data.reason}`,
         );
       }
 
@@ -274,10 +274,10 @@ export const settingsRunbooksStore: ISettingsRunbooksStore = {
         try {
           await settingsService.runbooks.setApiProvider(id, provider);
         } catch (error) {
-          const { response } = error as AxiosError<{ reason: string }>;
+          const { response } = errorToAxiosError(error);
           dispatchAddError(
             dispatch,
-            `Failed to save. Please try again. ${response?.data?.reason}`,
+            `Failed to save. Please try again. ${response?.data.reason}`,
           );
         }
 
@@ -298,10 +298,10 @@ export const settingsRunbooksStore: ISettingsRunbooksStore = {
         try {
           await settingsService.runbooks.patchDatabase(id, database);
         } catch (error) {
-          const { response } = error as AxiosError<{ reason: string }>;
+          const { response } = errorToAxiosError(error);
           dispatchAddError(
             dispatch,
-            `Failed to save. Please try again. ${response?.data?.reason}`,
+            `Failed to save. Please try again. ${response?.data.reason}`,
           );
         }
 

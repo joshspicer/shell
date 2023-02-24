@@ -1,5 +1,5 @@
 import { action, thunk } from 'easy-peasy';
-import { AxiosError } from 'axios';
+import { errorToAxiosError } from '@cased/utilities';
 import { dispatchSetLoading } from '../../loading/loading.store';
 import { transformRunResultData } from '../runbooks-store-helpers';
 import { dispatchAddError } from '../../notifications/notifications.store';
@@ -77,9 +77,10 @@ export const runbookRunStore: IRunbookRunStore = {
         const formatedResult = transformRunResultData(result, nodes);
         actions.setRunbookRunResult({ runResult: formatedResult });
       } catch (error) {
-        const { response } = error as AxiosError<{ reason: string }>;
+        const { response } = errorToAxiosError(error);
         console.error('Runbook run failed', error);
         success = false;
+        // istanbul ignore next
         dispatchAddError(
           dispatch,
           response?.data?.reason || 'Failed to run runbook. Please try again',

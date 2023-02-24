@@ -1,4 +1,5 @@
 import { IPrompt, IPromptForm, IPromptMoreInfoForm } from '@cased/data';
+import { errorToAxiosError } from '@cased/utilities';
 import { AxiosError } from 'axios';
 import { axiosInstance } from '../axios';
 import { transformPrompts } from './prompt-service.utilities';
@@ -120,7 +121,7 @@ export const promptService = {
 
       // istanbul ignore next
       if (error instanceof AxiosError) {
-        reason = error.response?.data?.reason;
+        reason = errorToAxiosError(error).response?.data.reason;
       }
       throw new Error(reason || `Download failed.`);
     }
