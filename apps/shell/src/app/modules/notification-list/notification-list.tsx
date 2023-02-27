@@ -12,7 +12,7 @@ export function NotificationList() {
     () =>
       notifications.map(({ type, message, id }) => {
         const className = clsx(
-          'alert d-block mb-1 border bg-red-600 p-2 text-sm text-white shadow-lg',
+          'alert d-block mb-1 border p-2 text-sm text-white shadow-lg',
           {
             'bg-red-600': type === NotificationType.Error,
             'bg-green-600': type === NotificationType.Success,

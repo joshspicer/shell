@@ -1,3 +1,4 @@
+export * from './lib/form';
 export * from './lib/logo/logo';
 export * from './lib/status-bar/status-bar';
 export * from './lib/form-partials/form-partial-hidden-password/form-partial-hidden-password';

@@ -1,28 +1,27 @@
-import { Button, FormInputText, TextBlock, TextLink } from '@cased/ui';
+import {
+  Button,
+  Form,
+  FormInputText,
+  TextBlock,
+  TextLink,
+  useFormData,
+} from '@cased/ui';
 import { useStoreActions } from '@cased/redux';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import SettingsTemplate, { TabId } from '../../settings-template';
 
 export function PageSettingsAddUser() {
-  const [form, setForm] = useState({
+  const [data, onChange, clearForm] = useFormData({
     email: '',
     password: '',
   });
 
   const create = useStoreActions((actions) => actions.users.create);
 
-  const updateForm = useCallback((name: string, value: string) => {
-    setForm((prev) => ({ ...prev, [name]: value }));
-  }, []);
-
-  const onSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const success = await create(form);
-      if (success) setForm({ email: '', password: '' });
-    },
-    [form, create],
-  );
+  const onSubmit = useCallback(async () => {
+    const success = await create(data);
+    if (success) clearForm();
+  }, [data, clearForm, create]);
 
   return (
     <SettingsTemplate testId="page-settings-add-user" activeTab={TabId.AddUser}>
@@ -32,13 +31,13 @@ export function PageSettingsAddUser() {
         more advanced user management tools.
       </TextBlock>
 
-      <form onSubmit={onSubmit} className="space-y-4">
+      <Form onSubmit={onSubmit}>
         <FormInputText
           required
           name="email"
           label="Email"
-          value={form.email}
-          onChange={updateForm}
+          value={data.email}
+          onChange={onChange}
           type="email"
         />
 
@@ -46,13 +45,13 @@ export function PageSettingsAddUser() {
           required
           name="password"
           label="Password"
-          value={form.password}
-          onChange={updateForm}
+          value={data.password}
+          onChange={onChange}
           type="password"
         />
 
         <Button type="submit">Create User</Button>
-      </form>
+      </Form>
 
       <TextBlock>
         To manage users visit the{' '}
