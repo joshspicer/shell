@@ -70,7 +70,7 @@ define("version", type=bool, help="Show version information", callback=print_ver
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 font_dirs = ["shell", "static", "css", "fonts"]
-MAX_BODY_SIZE = 1 * 1024 * 1024
+MAX_BODY_SIZE = 10 * 1024 * 1024
 
 
 class Font:

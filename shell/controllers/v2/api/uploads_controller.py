@@ -4,6 +4,7 @@ import tempfile
 import tornado
 
 from shell.controllers.v2 import BaseMixin
+from shell.models.prompt import Prompt
 
 
 class APIUploadsController(BaseMixin, tornado.web.RequestHandler):
@@ -24,11 +25,19 @@ class APIUploadsController(BaseMixin, tornado.web.RequestHandler):
 
         _uploaded_files = self.request.files.get("file")
         uploaded_file = _uploaded_files[0]
-
         filename = uploaded_file.get("filename")
-        hostname = self.get_argument("hostname")
-        port = self.get_argument("port")
-        username = self.get_argument("username")
+
+        slug = self.get_argument("slug")
+        if not slug:
+            raise tornado.web.HTTPError(400, "No slug provided")
+
+        prompt = Prompt.get(slug)
+        if not prompt:
+            raise tornado.web.HTTPError(404, "Prompt not found")
+
+        hostname = prompt.hostname
+        port = prompt.port
+        username = prompt.username
 
         # store the file temporarily
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -47,7 +56,10 @@ class APIUploadsController(BaseMixin, tornado.web.RequestHandler):
                     target_filename = "/home/{}/{}".format(username, filename)
 
                 with self._ssh_connect_context(
-                    args, proxy_jump=self.get_argument("proxy_jump", None)
+                    args,
+                    proxy_jump=self.get_argument(
+                        "proxy_jump", prompt.proxy_jump_string()
+                    ),
                 ) as ssh_client:
                     with contextlib.closing(ssh_client.open_sftp()) as upload_client:
                         upload_client.putfo(new_file, target_filename)

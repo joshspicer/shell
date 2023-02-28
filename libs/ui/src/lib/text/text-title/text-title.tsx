@@ -4,7 +4,7 @@ import './text-title.scss';
 
 export interface TextTitleProps {
   children: React.ReactNode;
-  size?: 'default' | 'lg';
+  size?: 'default' | 'lg' | '6xl';
   className?: string;
 }
 
@@ -18,6 +18,7 @@ export function TextTitle({
       clsx(`${initClassName} font-semibold`, {
         'text-base': size === 'default',
         'text-lg': size === 'lg',
+        'text-6xl': size === '6xl',
       }),
     [size, initClassName],
   );

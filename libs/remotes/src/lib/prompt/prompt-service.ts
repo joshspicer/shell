@@ -126,4 +126,21 @@ export const promptService = {
       throw new Error(reason || `Download failed.`);
     }
   },
+
+  upload: async (file: File, promptSlug: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('slug', promptSlug);
+    try {
+      return (await axiosInstance.post(`/api/uploads`, formData)).data;
+    } catch (error) {
+      let reason;
+
+      // istanbul ignore next
+      if (error instanceof AxiosError) {
+        reason = errorToAxiosError(error).response?.data.reason;
+      }
+      throw new Error(reason || `Upload failed.`);
+    }
+  },
 };

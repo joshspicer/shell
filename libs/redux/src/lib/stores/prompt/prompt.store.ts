@@ -57,6 +57,11 @@ type IPromptStore = {
     IStoreInjections,
     IStore
   >;
+  uploadFile: Thunk<
+    IPromptStore,
+    { slug: string; file: File },
+    IStoreInjections
+  >;
 };
 
 export const promptStore: IPromptStore = {
@@ -279,6 +284,28 @@ export const promptStore: IPromptStore = {
         );
         return false;
       }
+    },
+  ),
+
+  uploadFile: thunk(
+    async (
+      _actions,
+      { slug, file },
+      { injections: { promptService }, dispatch },
+    ) => {
+      try {
+        await promptService.upload(file, slug);
+      } catch (error) {
+        // istanbul ignore next
+        console.error('Failed to upload file', error);
+        dispatchNotification(
+          dispatch,
+          'Failed to upload file',
+          NotificationType.Error,
+        );
+        return;
+      }
+      dispatchNotification(dispatch, 'File uploaded', NotificationType.Success);
     },
   ),
 };

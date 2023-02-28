@@ -134,6 +134,17 @@ def make_handlers(loop, options):
             dict(loop=loop),
         ),
         (
+            r"/api/downloads",
+            APIDownloadsController,
+            dict(loop=loop, policy=policy, host_keys_settings=host_keys_settings),
+        ),
+        (
+            r"/api/uploads",
+            APIUploadsController,
+            dict(loop=loop, policy=policy, host_keys_settings=host_keys_settings),
+        ),
+        (r"/api/snippets", APISnippetsController, dict(loop=loop)),
+        (
             r"/api/meta",
             APIMetaController,
             dict(loop=loop),
