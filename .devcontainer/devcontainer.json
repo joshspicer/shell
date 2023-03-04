@@ -6,9 +6,6 @@
     "docker-compose.k3s.yml"
   ],
   "service": "app",
-  "hostRequirements": {
-    "storage": "64gb"
-  },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   // Set *default* container specific settings.json values on container create.
   "settings": {
